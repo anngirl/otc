@@ -5,15 +5,15 @@
     <ul class="order">
       <li class="price">
         <p>总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：</p>
-        <p>￥200</p>
+        <p>￥{{totPrice}}</p>
       </li>
       <li>
         <p>单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：</p>
-        <p>￥7.13/USDT</p>
+        <p>￥{{price}}/USDT</p>
       </li>
       <li>
         <p>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</p>
-        <p>28.05 USDT</p>
+        <p>{{nums}} USDT</p>
       </li>
       <li>
         <p>购买方式：</p>
@@ -58,6 +58,9 @@ import alipay from '@/assets/alipay.png'
 import card2 from '@/assets/card2.png'
 import wechat2 from '@/assets/wechat2.png'
 import alipay2 from '@/assets/alipay2.png'
+import dess from '@/utils/dess'
+import util from '@/utils/util'
+import api from '@/utils/api'
 export default {
   name: 'Buy',
   data () {
@@ -66,19 +69,14 @@ export default {
         text: '银行卡',
         icon: card,
         selectIcon: card2
-        }, {
-        text: '微信',
-        icon: wechat,
-        selectIcon: wechat2
-      }, {
-        text: '支付宝',
-        icon: alipay,
-        selectIcon: alipay2
       }],
       checkedValue: 0,
       checked,
       check,
       name: '',
+      totPrice: '',
+      nums: '',
+      price: ''
     }
   },
   watch:{
@@ -86,11 +84,18 @@ export default {
       console.log(this.checkedValue);
     }
   },
+  mounted () {
+    const info = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    this.totPrice = info.orderAmount
+    this.nums = info.nums
+    this.price = info.cnyToUsdt
+  },
   methods: {
     validate () {
-      if (this.name.length < 1) {
+      var re=/[\u4E00-\u9FA5\uF900-\uFA2D]/;
+      if (!(re.test(this.name))) {
         this.$message({
-          message: '请输入收款人姓名',
+          message: '请输入正确姓名',
           type: 'warning',
           center: true
         })
@@ -99,9 +104,7 @@ export default {
     },
     submit() {
       if (this.validate() === false) return;
-      this.$router.push({
-        path: '/buyConfirm'
-      })
+      api.buyPay(this.name, this.$route.params.info)
     }
   }
 }

@@ -9,6 +9,11 @@ Vue.config.productionTip = false
 import { Message } from 'element-ui';
 Vue.prototype.$message = Message
 Vue.component(Message.name, Message)
+
+// vue-cookies
+import VueCookies from 'vue-cookies'
+Vue.use(VueCookies)
+
 /* eslint-disable no-new */
 new Vue({
   el: '#app',

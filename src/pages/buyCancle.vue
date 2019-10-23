@@ -7,15 +7,15 @@
     <ul class="lists">
       <li class="price">
         <p>总价：</p>
-        <p>200.00CNY</p>
+        <p>{{theRequest.orderAmount}}CNY</p>
       </li>
       <li>
         <p>数量：</p>
-        <p>140.9988USDT</p>
+        <p>{{theRequest.nums}}USDT</p>
       </li>
       <li>
         <p>单价：</p>
-        <p>7.1CNY</p>
+        <p>{{cnyToUsdt}}CNY</p>
       </li>
     </ul>
     <div class="order_status">
@@ -24,7 +24,7 @@
     </div>
     <div class="order_status_pay">
       <img src="@/assets/empty.png" alt="">
-      <p>订单已取消，不可查看支付方式</p>
+      <p>{{status}}</p>
     </div>
     <div class="confirm_pay">
       <div class="confirm_pay_left">
@@ -48,12 +48,28 @@
   </div>
 </template>
 <script>
+import util from '@/utils/util'
+import dess from '@/utils/dess'
+import request from '@/utils/request'
 export default {
-  name: 'BuyCancle',
+  name: 'buyCancle',
   data () {
     return {
-      showLayer: false
+      theRequest: {},
+      cnyToUsdt: '',
+      status: '订单已取消，不可查看支付方式'
     }
+  },
+  mounted () {
+    const _this = this;
+    const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    console.log(theRequest)
+    this.theRequest = theRequest
+    this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
+    // request.post(`/third/v1/otc/orderStatus/${theRequest.orderId}`).then((res) => {
+    //   console.log(res)
+    //   this.status = res.status
+    // })
   },
   methods: {
   }

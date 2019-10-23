@@ -12,6 +12,7 @@ import BuyCancle from '@/pages/buyCancle'
 Vue.use(Router)
 
 export default new Router({
+  mode: 'history',
   routes: [
     {
       path: '/',
@@ -44,22 +45,22 @@ export default new Router({
       component: SaleOrder
     },
     {
-      path: '/buy',
+      path: '/buy/:info',
       name: 'Buy',
       component: Buy
     },
     {
-      path: '/buyConfirm',
+      path: '/buyConfirm/:info',
       name: 'BuyConfirm',
       component: BuyConfirm
     },
     {
-      path: '/buyOrder',
+      path: '/buyOrder/:info',
       name: 'BuyOrder',
       component: BuyOrder
     },
     {
-      path: '/buyCancle',
+      path: '/buyCancle/:info',
       name: 'BuyCancle',
       component: BuyCancle
     }

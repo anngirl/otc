@@ -7,20 +7,20 @@
     <ul class="lists">
       <li class="price">
         <p>总价：</p>
-        <p>200.00CNY</p>
+        <p>{{theRequest.orderAmount}}CNY</p>
       </li>
       <li>
         <p>数量：</p>
-        <p>140.9988USDT</p>
+        <p>{{theRequest.nums}}USDT</p>
       </li>
       <li>
         <p>单价：</p>
-        <p>7.1CNY</p>
+        <p>{{cnyToUsdt}}CNY</p>
       </li>
     </ul>
     <div class="order_num">
       <p>订单号：</p>
-      <p>1181231923129311812319231293123456</p>
+      <p>{{theRequest.orderId}}</p>
     </div>
     <div class="order_status">
       <p>订单状态</p>
@@ -36,18 +36,27 @@
 </template>
 
 <script>
+import util from '@/utils/util'
+import dess from '@/utils/dess'
 export default {
   name: 'buyOrder',
   data () {
     return {
+      theRequest: {},
+      cnyToUsdt: ''
     }
   },
   components: {
   },
+  mounted () {
+    const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    this.theRequest = theRequest
+    this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
+  },
   methods: {
     toRecord () {
       this.$router.push({
-        path: '/record'
+        path: `/record/${this.$route.params.info}`
       })
     }
   }

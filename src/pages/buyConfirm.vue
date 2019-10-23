@@ -7,15 +7,15 @@
     <ul class="lists">
       <li class="price">
         <p>总价：</p>
-        <p>200.00CNY</p>
+        <p>{{details.orderAmount}}CNY</p>
       </li>
       <li>
         <p>数量：</p>
-        <p>140.9988USDT</p>
+        <p>{{details.nums}}88USDT</p>
       </li>
       <li>
         <p>单价：</p>
-        <p>7.1CNY</p>
+        <p>{{cnyToUsdt}}CNY</p>
       </li>
     </ul>
     <div class="order_status">
@@ -23,20 +23,20 @@
       <p></p>
     </div>
     <div class="order_status_pay">
-      <p>请务必使用本人（王*羽） 的支付方式向一下账号自行转账</p>
+      <p>请务必使用本人（{{details.customerId}}） 的支付方式向一下账号自行转账</p>
     </div>
     <ul class="pay_info">
       <li class="pay_type">银行卡</li>
-      <li class="pay_name">李子俊</li>
-      <li class="card_info">1233 2344 3242 3444 888 ， 中国银行</li>
+      <li class="pay_name">{{details.payee}}</li>
+      <li class="card_info">{{ details.pay_account }} ， {{details.payee_bank}}</li>
     </ul>
     <div class="confirm_pay">
       <div class="confirm_pay_left">
         <div class="confirm_pay_left_top">
           <p>待转账，请向对方转账</p>
-          <p><span>14</span>:<span>52</span></p>
+          <p><span>{{firstTime}}</span>:<span>{{lastTime}}</span></p>
         </div>
-        <p class="confirm_pay_left_bottom">1000<span>CNY</span></p>
+        <p class="confirm_pay_left_bottom">{{details.orderAmount}}<span>CNY</span></p>
       </div>
       <div class="confirm_pay_right">
         <button class="confirm" @click="complete">我已完成转账</button>
@@ -65,26 +65,82 @@
 </template>
 <script>
 import CancleOrder from '@/components/cancleOrder'
+import dess from '@/utils/dess'
+import util from '@/utils/util'
+import request from '@/utils/request'
+import api from '@/utils/api'
 export default {
   name: 'saleOrder',
   data () {
     return {
-      showLayer: false
+      showLayer: false,
+      details: {},
+      cnyToUsdt: '',
+      firstTime: '00',
+      lastTime: '00'
     }
   },
   components: {
     CancleOrder
   },
+  mounted () {
+    const _this = this
+    const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    this.details = theRequest
+    this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
+    request.post(`/third/v1/otc/orderStatus/${theRequest.orderId}`).then((res) => {
+      this.$cookies.set('times', res.countDown)
+      setInterval(() => {
+        _this.antitime()
+      }, 1000)
+      if (res.status === "付款超时或用户取消" || res.status === "交易完成" || res.status === "商家取消") {
+        const userId = this.$cookies.get('userId')
+        const outuid = this.$cookies.get('outuid')
+        const buyOrderStatus = dess.encryptByDESModeCBC(`userId=${userId}&outuid=${outuid}&orderNo=${theRequest.orderId}&cnyAmount=${theRequest.orderAmount}&usdtAmount=${theRequest.nums}`)
+        this.$router.push({
+          path: `/payStatus/${this.$route.params.info}`
+        })
+      }
+    })
+  },
   methods: {
     confirmCancle () {
-      this.$router.push({
-        path: '/buyCancle'
-      })
+      // 取消购买
+      api.cancleBuy(this.$route.params.info)
     },
     complete () {
       this.$router.push({
-        path: '/buyOrder'
+        path: `/buyOrder/${this.$route.params.info}`
       })
+    },
+    timestampToTime(timestamp) {
+        var date = new Date(timestamp * 1000);
+        var Y = date.getFullYear() + '-';
+        var M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var D = (date.getDate() < 10 ? '0'+date.getDate() : date.getDate()) + ' ';
+        var h = (date.getHours() < 10 ? '0'+date.getHours() : date.getHours()) + ':';
+        var m = (date.getMinutes() < 10 ? '0'+date.getMinutes() : date.getMinutes()) + ':';
+        var s = (date.getSeconds() < 10 ? '0'+date.getSeconds() : date.getSeconds());
+        return Y+M+D+h+m+s;
+    },
+    antitime() {
+      var timess=this.$cookies.get("times");
+      var time = this.timestampToTime(timess);
+      var to = new Date(time.replace(/-/g,"/"));
+      var now = new Date();
+      var deltaTime = to.getTime() - now.getTime();
+      if (deltaTime <= 0) {
+          window.clearInterval(timer);
+          return;
+      }
+      var d= deltaTime / (1000 * 60 * 60 * 24);
+      var h = Math.floor(deltaTime / 1000 / 60 / 60 % 24);
+      var m = Math.floor(deltaTime / 1000 / 60 % 60);
+      var s = Math.floor(deltaTime / 1000 % 60);
+      var timeStr = "" + (m/10>=1?m=m:m="0"+m) + (s/10>=1?s=s:s="0"+s)
+      console.log(timeStr)
+      this.firstTime = timeStr.substr(0, 2)
+      this.lastTime = timeStr.substr(2, 2)
     }
   }
 }

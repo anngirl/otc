@@ -1,7 +1,7 @@
 {
-  "name": "y",
+  "name": "otc",
   "version": "1.0.0",
-  "description": "y",
+  "description": "otc",
   "author": "侯倩 <13718391141@163.com>",
   "private": true,
   "scripts": {
@@ -10,8 +10,10 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "axios": "^0.19.0",
     "element-ui": "^2.12.0",
     "vue": "^2.5.2",
+    "vue-cookies": "^1.5.13",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
@@ -28,6 +30,7 @@
     "babel-preset-stage-2": "^6.22.0",
     "chalk": "^2.0.1",
     "copy-webpack-plugin": "^4.0.1",
+    "crypto-js": "^3.1.9-1",
     "css-loader": "^0.28.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^1.1.4",
