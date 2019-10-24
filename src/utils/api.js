@@ -7,11 +7,11 @@ import VueCookies from 'vue-cookies'
 
 VueCookies.set('balance', 9000)
 VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
-VueCookies.set('userId', 11604)
+VueCookies.set('userId', 11604) //11604
 
-var balance = 9000
-var outuid = '93E109400B20A29440FD597894991046'
-var userId = 11604
+let balance = VueCookies.get('balance')
+let outuid = VueCookies.get('outuid')
+let userId = VueCookies.get('userId')
 
 function verify () {
   // const url = '357a637232e23db340b8c5372275923cfec6c79f61ce8bd10646a13793351c85c6f256d118a2f252';
@@ -22,12 +22,6 @@ function verify () {
   // VueCookies.set('userId', theRequest.userId)
 }
 
-function getExchangeRate() {
-  request.post('/third/v1/otc/getExchangeRate/11604').then((res) => {
-    localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
-    localStorage.setItem('usdtToCny', res.obj.usdtToCny)
-  })
-}
 function orderList () {
   const info = dess.encryptByDESModeCBC(`userId=${userId}&outuid=${outuid}&balance=${balance}`)
   router.push({
@@ -144,10 +138,10 @@ function salePayConfirm (info) {
   })
 }
 
+
 export default {
   verify,
   orderList,
-  getExchangeRate,
   buy,
   sale,
   buyPay,

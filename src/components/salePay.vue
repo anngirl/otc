@@ -19,34 +19,35 @@
             <span>收款方式：</span>
           </p>
           <div class="radio">
-            <label v-for="(item, index) in types" :key="index">
-              <img :src="checkedValue === index ? checked : check" alt="">
-              <input v-model="checkedValue" type="radio" name="Q3" :value="index"/>
-              <span>{{item}}</span>
+            <label v-for="(item, index) in types" :key="index" :class="item.value == 1 ? 'nopointer' : ''">
+              <img :src="checkedValue === item.text ? checked : check" alt="">
+              <input v-model="checkedValue" type="radio" name="Q3" :value="item.text"/>
+              <span>{{item.text}}</span>
             </label>
           </div>
         </div>
-        <div v-show="checkedValue === 0" class="sale_pay_item">
+        <div v-show="checkedValue === '银行卡'" class="sale_pay_item">
           <p>
             <span class="red">*</span>
             <span>收款银行：</span>
           </p>
           <input type="text" v-model="bank" placeholder="请输入收款银行">
         </div>
-        <div v-show="checkedValue === 0" class="sale_pay_item">
+        <div v-show="checkedValue === '银行卡'" class="sale_pay_item">
           <p>
             <span class="red">*</span>
             <span>收款卡号：</span>
           </p>
           <input type="text" v-model="card" placeholder="请输入收款银行卡号">
         </div>
-        <div v-show="checkedValue === 1 || checkedValue === 2" class="sale_pay_item sale_pay_upload">
+        <div v-show="checkedValue === '微信' || checkedValue === '支付宝'" class="sale_pay_item sale_pay_upload">
           <p>
             <span class="red">*</span>
             <span>上传二维码：</span>
           </p>
           <div class="upload">
-            <img src="@/assets/upload.png" alt="">
+            <input type="file" @change="addImg" multiple=false ref="inputer" accept="image/jpg,image/jpeg,image/png,image/bmp"/>
+            <img :src="imgSrc !== '' ? imgSrc : upload" @click="upload" alt="">
             <p>请上传收款二维码</p>
           </div>
         </div>
@@ -59,6 +60,8 @@
 <script>
 import checked from '@/assets/checked.png';
 import check from '@/assets/check.png'
+import request from "@/utils/request";
+import upload from "@/assets/upload.png";
 export default {
   name: 'salePay',
   data () {
@@ -66,21 +69,70 @@ export default {
       name: '测试',
       bank: '中国银行',
       card: '6217900100010758715',
-      // types: ['银行卡', '微信', '支付宝'],
-      types: ['银行卡'],
-      checkedValue: 0,
+      types: [],
+      checkedValue: '',
       checked,
-      check
+      check,
+      imgSrc: '',
+      upload
     }
   },
   watch:{
-    checkedValue:function(){
-    }
+    checkedValue () {
+      this.imgSrc = ''
+    },
   },
-  components: {
+  mounted () {
+    this.types = [{
+      text: '银行卡',
+      value: localStorage.getItem('bank')
+    }, {
+      text: '支付宝',
+      value: localStorage.getItem('zfb')
+    }, {
+      text: '微信',
+      value: localStorage.getItem('wx')
+    }]
   },
   methods: {
-    validate () {
+    upload () {
+    },
+    addImg (event) {
+      const inputDOM = this.$refs.inputer.files[0]
+      let formData = new FormData()
+      formData.append('file', inputDOM)
+      formData.append('folderId', inputDOM.name)
+      formData.append('softType', inputDOM.type)
+      const config = { headers: { 'Content-Type': 'multipart/form-data'}}
+      request.post('/api/v2/user/uploadPic', formData, config).then((res) => {
+        if (res.code === 1) {
+          this.imgSrc = res.obj.pic
+        } else {
+          this.$message({
+            type: 'warning',
+            message: res.msg,
+            center: true
+          })
+        }
+      })
+    },
+    confirm () {
+      if (this.checkedValue === '') {
+        this.$message({
+          message: '请选择收款方式',
+          type: 'warning',
+          canter: true
+        })
+        return false
+      }
+      if (this.checkedValue === '银行卡') {
+        if (this.validate1() === false) return;
+        this.$emit('confirmSale', this.name, this.bank, this.card)
+      } else if (this.checkedValue === 1) {
+        // this.$message('其他支付方式')
+      }
+    },
+    validate1 () {
       if (this.name.trim().length < 1) {
         this.$message({
           message: '请输入收款人姓名',
@@ -104,17 +156,6 @@ export default {
           canter: true
         })
         return false
-      }
-    },
-    confirm () {
-      if (this.checkedValue === 0) {
-        if (this.validate() === false) return;
-        this.$emit('confirmSale', this.name, this.bank, this.card)
-        // this.$router.push({
-        //   path: '/saleConfirm'
-        // })
-      } else if (this.checkedValue === 1) {
-        // this.$message('其他支付方式')
       }
     },
     close () {
@@ -200,21 +241,38 @@ export default {
                 margin-right: 0.2vw;
                 display: block;
               }
+              &.nopointer{
+                pointer-events: none;
+                opacity: 0.7;
+              }
             }
+
           }
         }
         .sale_pay_upload{
           .upload{
+            position: relative;
             margin-top: 15px;
             img{
               width: 100px;
               height: 100px;
+              cursor: pointer;
             }
             p{
               color: #999999;
               font-size: 14px;
               line-height: 18px;
               height: 18px;
+            }
+            input{
+              cursor: pointer;
+              position: absolute;
+              left: 0;
+              top: 0;
+              width: 100px;
+              height: 100px;
+              opacity: 0;
+              padding: 0;
             }
           }
         }
