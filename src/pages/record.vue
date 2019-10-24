@@ -5,26 +5,24 @@
     </ul>
     <table cellpadding="0"  v-if="list2.length > 0" >
       <tr class="title">
-        <th class="title_order" width="200px">订单号</th>
-        <th>状态</th>
-        <th>总价</th>
-        <th>单价</th>
-        <th>交易数量</th>
-        <th>交易对象</th>
-        <th>时间</th>
-        <th>操作</th>
+        <th class="title_order" width="200px" align="left">订单号</th>
+        <th align="center">状态</th>
+        <th align="center">总价</th>
+        <th align="center">单价</th>
+        <th align="center">交易数量</th>
+        <th align="center">时间</th>
+        <th width="140px" align="right">操作</th>
       </tr>
       <tr class="item" v-for="(item, index) in list2" :key="index">
-        <td class="order" width="200px">
-          <span>{{item.type === '买币' ? '购买' : '出售'}}  {{item.orderNo}}</span>
+        <td class="order" width="200px" align="left">
+          <p><span :class="item.type === '买币' ? 'green' : 'red'">{{item.type === '买币' ? '购买' : '出售'}}</span>{{item.orderNo}}</p>
         </td>
-        <td>{{item.status}}</td>
-        <td>{{item.cnyAmount}}CNY</td>
-        <td>{{item.type === '买币' ? cnyToUsdt : usdtToCny}}CNY</td>
-        <td>{{item.usdtAmount}}USDT</td>
-        <td>王冉冉</td>
-        <td>{{item.createTime}}</td>
-        <td width="140px">
+        <td align="center">{{item.status}}</td>
+        <td align="center">{{item.cnyAmount}}CNY</td>
+        <td align="center">{{item.type === '买币' ? cnyToUsdt : usdtToCny}}CNY</td>
+        <td align="center">{{item.usdtAmount}}USDT</td>
+        <td align="center">{{item.createTime}}</td>
+        <td align="right">
           <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="toBuy(item.orderNo)">去支付</span>
           <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
         </td>
@@ -182,7 +180,6 @@ export default {
     table{
       width: 100%;
       .title{
-        text-align: right;
         font-family: PingFangSC-Medium;
         font-size: 18px;
         color: #9A9999;
@@ -220,15 +217,23 @@ export default {
       .order{
         max-width: 200px;
         text-align: left;
-        display: inline;
         word-break:break-all;
         white-space:pre-wrap;
-        span:nth-child(1) {
+        p{
           display: inline-block;
           color: #1276ED;
           width: 160px;
+          text-align: left;
           white-space:pre-wrap;
           word-break:break-all;
+          span.green {
+            margin-right: 20px;
+            color: #67C99A;
+          } 
+          span.red{
+            margin-right: 20px;
+            color: #EC5F45;
+          }
         }
       }
       .confirm{

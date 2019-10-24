@@ -177,8 +177,8 @@ export default {
     font-family: PingFangSC-Regular;
     .input{
       width: 320px;
-      height: 65px;
-      line-height: 65px;
+      height: 50px;
+      line-height: 50px;
       border: solid 1px #2589FF;
       border-radius: 8px;
       font-size: 16px;
@@ -201,18 +201,18 @@ export default {
     }
     .btn-wrap{
       border-top-left-radius: 8px;
-      // border-radius: 8px;
+      border-radius: 8px;
       position: relative;
       margin-left: 1.4vw;
       // overflow: hidden;
       height: auto;
       div.btn{
         width: 183px;
-        height: 65px;
+        line-height: 50px;
         display: flex;
         justify-content: center;
         background-color: #2D85F0;
-        font-size: 24px;
+        font-size: 20px;
         color: #ffffff;
         align-items: center;
         cursor: pointer;
@@ -221,8 +221,8 @@ export default {
           display: block;
         }
         img{
-          width: 32px;
-          height: 32px;
+          width: 28px;
+          height: 28px;
         }
       }
       .list{
@@ -233,10 +233,10 @@ export default {
           margin: 0 auto;
           width: 155px;
           text-align: center;
-          font-size: 24px;
+          font-size: 20px;
           color: #000000;
-          height: 65px;
-          line-height: 65px;
+          height: 50px;
+          line-height: 50px;
           border-bottom: solid 1px #ffffff;
           &.active{
             color: #2D85F0;

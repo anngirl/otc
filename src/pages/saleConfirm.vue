@@ -20,7 +20,7 @@
         <span><span style="color: #2D85F0;">银行卡</span> {{details.name}} {{details.card}}     {{details.bank}}</span>
       </li>
     </ul>
-    <button class="btn" @click="confirm">确认出售</button>
+    <button class="btn" @click="confirm" :disabled="disabled">确认出售</button>
     <ul class="notice">
       <li>1.USDT到账数量以实际交割为准</li>
       <li>2.如有大额交易需求可直接联系客服微信：swftcoin2。</li>
@@ -41,7 +41,8 @@ export default {
   data () {
     return {
       details: {},
-      usdtToCny: ''
+      usdtToCny: '',
+      disabled: false
     }
   },
   mounted () {
@@ -51,7 +52,12 @@ export default {
   },
   methods: {
     confirm () {
+      this.disabled = true
       api.salePayConfirm(this.$route.params.info)
+      const _this = this
+      setTimeout(() => {
+        _this.disabled = false
+      }, 5000)
     }
   }
 }
@@ -108,9 +114,10 @@ export default {
       background-color: #2D85F0;
       border-radius: 8px;
       width: 230px;
-      height: 65px;
+      height: 50px;
+      line-height: 50px;
       font-family: PingFangSC-Regular;
-      font-size: 24px;
+      font-size: 20px;
       color: #FFFFFF;
       margin-left: 2vw;
       margin-top: 1vh;

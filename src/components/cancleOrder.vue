@@ -9,11 +9,11 @@
       <p class="cancle_pay_rule">取消规则：买家当日累计3笔取消，会限制当日买入功能</p>
       <div class="cancle_pay_check"  @click="isChecked = !isChecked">
         <img :src="isChecked ? checked : check" alt="">
-        <p>我确认还没有付款给对方</p>
+        <p :class="showRed ? 'red' : ''">我确认还没有付款给对方</p>
       </div>
       <div class="btn_wrap">
         <button class="confirm" @click="cancle">我再想想</button>
-        <button :class="isChecked ? 'cancle' : 'pointer cancle'" @click="confirm">确定</button>
+        <button :class="isChecked ? 'cancle' : 'pointer cancle'" :disabled="disabled" @click="confirm">确定</button>
       </div>
     </div>
   </div>
@@ -28,7 +28,9 @@ export default {
     return {
       checked,
       check,
-      isChecked: false
+      isChecked: false,
+      showRed: false,
+      disabled: false
     }
   },
   methods: {
@@ -36,6 +38,17 @@ export default {
       this.$emit('cancle')
     },
     confirm () {
+      const _this = this
+      if (!(this.isChecked)) {
+        this.showRed = true
+        return false
+      } else {
+        this.showRed = false
+        this.disabled = true
+        setTimeout(() => {
+          _this.disabled = false
+        }, 5000)
+      }
       this.$emit('confirmCancle')
     }
   }
@@ -123,8 +136,8 @@ export default {
           &.cancle{
             background-color: #ffffff;
             color: #2D85F0;
+            cursor: pointer;
             &.pointer{
-              pointer-events: none;
               color: #999999;
               border: solid 1px #999999;
             }
@@ -142,6 +155,9 @@ export default {
         background-color: #2D85F0;
         margin: 2.8vh auto 0;
         display: block;
+      }
+      .red{
+        color: #EC5F45 !important;
       }
     }
   }

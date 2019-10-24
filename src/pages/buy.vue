@@ -38,7 +38,7 @@
         <img src="@/assets/upload.png" class="upload" alt="">
       </li>
     </ul>
-    <button class="btn" @click="submit">提交订单</button>
+    <button class="btn" @click="submit" :disabled="disabled">提交订单</button>
     <ul class="notice">
       <li>1.USDT到账数量以实际交割为准</li>
       <li>2.如有大额交易需求可直接联系客服微信：swftcoin2。</li>
@@ -76,7 +76,8 @@ export default {
       name: '',
       totPrice: '',
       nums: '',
-      price: ''
+      price: '',
+      disabled: false
     }
   },
   watch:{
@@ -103,7 +104,12 @@ export default {
     },
     submit() {
       if (this.validate() === false) return;
+      this.disabled = true
+      const that = this
       api.buyPay(this.name, this.$route.params.info)
+      setTimeout(() => {
+        that.disabled = false
+      }, 5000)
     }
   }
 }
@@ -212,9 +218,10 @@ export default {
       background-color: #2D85F0;
       border-radius: 8px;
       width: 230px;
-      height: 65px;
+      height: 50px;
+      line-height: 50px;
       font-family: PingFangSC-Regular;
-      font-size: 24px;
+      font-size: 20px;
       color: #FFFFFF;
       margin-left: 6.7vw;
       margin-top: 1vh;

@@ -222,11 +222,11 @@ export default {
       .btn{
         cursor: pointer;
         width: 230px;
-        height: 65px;
-        font-size: 24px;
+        height: 50px;
+        font-size: 20px;
         border-radius: 8px;
         text-align: center;
-        line-height: 65px;
+        line-height: 50px;
         color: #ffffff;
         background-color: #2D85F0;
         margin: 2.8vh auto 0;

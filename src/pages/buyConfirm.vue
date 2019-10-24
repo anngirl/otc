@@ -39,7 +39,7 @@
         <p class="confirm_pay_left_bottom">{{details.cnyAmount}}<span>CNY</span></p>
       </div>
       <div class="confirm_pay_right">
-        <button class="confirm" @click="complete">我已完成转账</button>
+        <button class="confirm" @click="complete" :disabled="disabled">我已完成转账</button>
         <button class="cancle" @click="showLayer = true">取消订单</button>
       </div>
     </div>
@@ -78,7 +78,8 @@ export default {
       cnyToUsdt: '',
       firstTime: '00',
       lastTime: '00',
-      customerId: ''
+      customerId: '',
+      disabled: false
     }
   },
   components: {
@@ -119,7 +120,12 @@ export default {
       api.cancleBuy(this.$route.params.info)
     },
     complete () {
+      this.disabled = true
+      const _this = this
       api.completeBuy(this.$route.params.info)
+      setTimeout(() => {
+        _this.disabled = false
+      }, 5000)
     },
     timestampToTime(timestamp) {
         var date = new Date(timestamp * 1000);
@@ -330,8 +336,8 @@ export default {
       }
       .confirm_pay_right{
         button{
-          height: 60px;
-          line-height: 60px;
+          height: 50px;
+          line-height: 50px;
           color: #ffffff;
           border-radius: 4px;
           position: relative;

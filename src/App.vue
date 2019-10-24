@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <header class="header">
-      <img src="@/assets/logo.png" class="logo" alt="">
+      <router-link to="/">
+        <img src="@/assets/logo.png" class="logo" alt="">
+      </router-link>
       <button @click="toRecord">交易记录</button>
     </header>
     <router-view/>
