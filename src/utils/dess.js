@@ -9,7 +9,6 @@ function encryptByDESModeCBC(message) {
     mode: CryptoJS.mode.CBC,
     padding:CryptoJS.pad.Pkcs7
   });
-  // console.log(encrypted.ciphertext.toString());
   return encrypted.ciphertext.toString();
 }
 //解密

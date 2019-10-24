@@ -111,7 +111,6 @@ export default {
       } else if (this.curIndex === 3) {
         this.list2 = this.list
       }
-      console.log(this.list2)
     },
     switchs (index) {
       this.curIndex = index
@@ -121,8 +120,6 @@ export default {
       this.showConfirm = false
       const outuid = this.$cookies.get('outuid')
       const userId = this.$cookies.get('userId')
-      console.log(`userId=${userId}&outUserId=${outuid}&orderAmount=${this.orderAmount}&customerId=${this.customerId}`)
-      return;
       const m = dess.encryptByDESModeCBC(`userId=${userId}&outUserId=${outuid}&orderAmount=${this.orderAmount}&customerId=${this.customerId}`)
       let data = {}
       data.m = m

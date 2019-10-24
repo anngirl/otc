@@ -75,7 +75,6 @@ export default {
   },
   watch:{
     checkedValue:function(){
-      console.log(this.checkedValue);
     }
   },
   components: {

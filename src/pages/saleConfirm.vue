@@ -46,16 +46,12 @@ export default {
   },
   mounted () {
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
-    console.log(theRequest)
     this.details = theRequest
     this.usdtToCny = localStorage.getItem('usdtToCny')
   },
   methods: {
     confirm () {
       api.salePayConfirm(this.$route.params.info)
-      // this.$router.push({
-      //   path: '/saleOrder'
-      // })
     }
   }
 }

@@ -50,10 +50,6 @@ export default {
       default: ''
     },
   },
-  mounted () {
-    console.log(this.customerId)
-    console.log(this.orderAmount)
-  },
   methods: {
     cancle () {
       this.$emit('cancle')

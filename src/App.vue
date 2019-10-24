@@ -19,7 +19,7 @@ export default {
     toRecord () {
       api.orderList()
     }
-  }
+  },
 }
 </script>
 

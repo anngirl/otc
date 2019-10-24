@@ -87,10 +87,7 @@ export default {
   mounted () {
     const _this = this
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
-    console.log(theRequest)
     this.customerId = theRequest.customerId
-    console.log(this.customerId)
-    // this.details = theRequest
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
     request.post(`/third/v1/otc/orderStatus/${theRequest.orderId}`).then((res) => {
       this.details = res.obj
@@ -150,7 +147,6 @@ export default {
       var m = Math.floor(deltaTime / 1000 / 60 % 60);
       var s = Math.floor(deltaTime / 1000 % 60);
       var timeStr = "" + (m/10>=1?m=m:m="0"+m) + (s/10>=1?s=s:s="0"+s)
-      // console.log(parseInt(timeStr))
       if(parseInt(timeStr) < 10) {
         this.$router.push({
           path: `/buyCancle/${this.$route.params.info}`

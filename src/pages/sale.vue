@@ -48,7 +48,6 @@ export default {
   },
   mounted () {
     const info = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
-    console.log(info)
     this.details = info
   },
   methods: {

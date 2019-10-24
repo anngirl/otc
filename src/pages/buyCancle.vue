@@ -63,7 +63,6 @@ export default {
   mounted () {
     const _this = this;
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
-    console.log(theRequest)
     this.theRequest = theRequest
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
   },

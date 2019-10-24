@@ -8,7 +8,6 @@ import VueCookies from 'vue-cookies'
 VueCookies.set('balance', 9000)
 VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
 VueCookies.set('userId', 11604)
-// console.log(VueCookies.get('times'))
 
 var balance = 9000
 var outuid = '93E109400B20A29440FD597894991046'
@@ -113,14 +112,12 @@ function salePay (name, bank, card, info) {
 // 确认出售
 function salePayConfirm (info) {
   const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
-  console.log(theRequest)
   // return
   const m = dess.encryptByDESModeCBC(`userId=${userId}&outUserId=${outuid}&orderAmount=${theRequest.nums}&name=${theRequest.name}&cardno=${theRequest.card}&bankname=${theRequest.bank}`);
   let data = {}
   data.m = m
   const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' }}
   request.post('/third/v1/otc/withdraw', JSON.stringify(data), config).then((res) => {
-    console.log(res)
     if (res.code === 0){
       Message.warning({
         message: res.msg,
