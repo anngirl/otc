@@ -17,6 +17,9 @@
 import api from '@/utils/api'
 export default {
   name: 'App',
+  created () {
+    api.verify()
+  },
   methods: {
     toRecord () {
       api.orderList()

@@ -12,6 +12,16 @@ VueCookies.set('userId', 11604)
 var balance = 9000
 var outuid = '93E109400B20A29440FD597894991046'
 var userId = 11604
+
+function verify () {
+  // const url = '357a637232e23db340b8c5372275923cfec6c79f61ce8bd10646a13793351c85c6f256d118a2f252';
+  // const theRequest = util.decodeURI(dess.decryptByDESModeEBC(url))
+  console.log('咱也不知道干啥')
+  // VueCookies.set('balance', theRequest.balance)
+  // VueCookies.set('outuid', theRequest.outuid)
+  // VueCookies.set('userId', theRequest.userId)
+}
+
 function getExchangeRate() {
   request.post('/third/v1/otc/getExchangeRate/11604').then((res) => {
     localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
@@ -135,6 +145,7 @@ function salePayConfirm (info) {
 }
 
 export default {
+  verify,
   orderList,
   getExchangeRate,
   buy,
