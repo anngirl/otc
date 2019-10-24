@@ -27,7 +27,7 @@
         <img src="@/assets/chuizi.png" class="chuizi" alt="">
         <p v-if="curIndex === 0">最新买入价：{{cnyToUsdt}}CNY/USDT</p>
         <p v-else>最新卖出价：{{usdtToCny}}CNY/USDT</p>
-        <p>可用余额: <span>7.1932USDT</span></p>
+        <p>可用余额: <span>{{balance}}USDT</span></p>
       </div>
     </section>
   </div>
@@ -47,13 +47,16 @@ export default {
       show: false,
       curIndex: 0,
       usdtToCny: 0,  // 卖
-      cnyToUsdt: 0  // 买
+      cnyToUsdt: 0,  // 买
+      balance: 0
     }
   },
   mounted () {
+    this.balance = this.$cookies.get('balance')
     request.post('/third/v1/otc/getExchangeRate/11604').then((res) => {
       localStorage.setItem('cnyToUsdt', res.cnyToUsdt)
-      localStorage.getItem('usdtToCny', res.usdtToCny)
+      localStorage.setItem('usdtToCny', res.usdtToCny)
+      
       this.cnyToUsdt = res.cnyToUsdt
       this.usdtToCny = res.usdtToCny
     })

@@ -98,7 +98,11 @@ export default {
         const outuid = this.$cookies.get('outuid')
         const buyOrderStatus = dess.encryptByDESModeCBC(`userId=${userId}&outuid=${outuid}&orderNo=${theRequest.orderId}&cnyAmount=${theRequest.orderAmount}&usdtAmount=${theRequest.nums}`)
         this.$router.push({
-          path: `/payStatus/${this.$route.params.info}`
+          path: `/buyCancle/${this.$route.params.info}`
+        })
+      } else if (res.status === "交易完成") {
+        this.$router.push({
+          path: '/'
         })
       }
     })
@@ -124,21 +128,27 @@ export default {
         return Y+M+D+h+m+s;
     },
     antitime() {
+      const _this = this;
       var timess=this.$cookies.get("times");
       var time = this.timestampToTime(timess);
       var to = new Date(time.replace(/-/g,"/"));
       var now = new Date();
       var deltaTime = to.getTime() - now.getTime();
       if (deltaTime <= 0) {
-          window.clearInterval(timer);
-          return;
+        clearInterval(_this.antitime());
+        return;
       }
       var d= deltaTime / (1000 * 60 * 60 * 24);
       var h = Math.floor(deltaTime / 1000 / 60 / 60 % 24);
       var m = Math.floor(deltaTime / 1000 / 60 % 60);
       var s = Math.floor(deltaTime / 1000 % 60);
       var timeStr = "" + (m/10>=1?m=m:m="0"+m) + (s/10>=1?s=s:s="0"+s)
-      console.log(timeStr)
+      console.log(parseInt(timeStr))
+      if(parseInt(timeStr) < 10) {
+        this.$router.push({
+          path: `/buyCancle/${this.$route.params.info}`
+        })
+      }
       this.firstTime = timeStr.substr(0, 2)
       this.lastTime = timeStr.substr(2, 2)
     }

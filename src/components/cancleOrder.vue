@@ -31,8 +31,6 @@ export default {
       isChecked: false
     }
   },
-  components: {
-  },
   methods: {
     cancle () {
       this.$emit('cancle')

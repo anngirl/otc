@@ -5,7 +5,7 @@
         <span>确认支付</span>
         <img @click="cancle" src="@/assets/close.png" alt="">
       </div>
-      <p class="confirm_pay_notice">500 CNY</p>
+      <p class="confirm_pay_notice">{{orderAmount}} CNY</p>
       <div class="confirm_pay_status">
         <p>请确认转账账户</p>
         <p></p>
@@ -16,8 +16,8 @@
           <span>银行卡支付</span>
         </div>
         <div class="confirm_pay_check_right">
-          <span>王浩然</span>
-          <span>15812345678</span>
+          <span>{{customerId}}</span>
+          <!-- <span>15812345678</span> -->
         </div>
       </div>
       <div class="btn_wrap">
@@ -40,7 +40,18 @@ export default {
       isChecked: true
     }
   },
-  components: {
+  props: {
+    orderAmount: {
+      type: String,
+      default: ''
+    },
+    customerId: {
+      type: String,
+      default: ''
+    },
+  },
+  mounted () {
+    console.log(this.customerId)
   },
   methods: {
     cancle () {

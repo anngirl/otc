@@ -38,6 +38,7 @@
 <script>
 import util from '@/utils/util'
 import dess from '@/utils/dess'
+import api from '@/utils/api'
 export default {
   name: 'buyOrder',
   data () {
@@ -55,9 +56,7 @@ export default {
   },
   methods: {
     toRecord () {
-      this.$router.push({
-        path: `/record/${this.$route.params.info}`
-      })
+      api.orderList()
     }
   }
 }

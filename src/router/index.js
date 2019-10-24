@@ -25,24 +25,9 @@ export default new Router({
       component: Index
     },
     {
-      path: '/record',
+      path: '/record/:info',
       name: 'Record',
       component: Record
-    },
-    {
-      path: '/sale',
-      name: 'Sale',
-      component: Sale
-    },
-    {
-      path: '/saleConfirm',
-      name: 'SaleConfirm',
-      component: SaleConfirm
-    },
-    {
-      path: '/saleOrder',
-      name: 'SaleOrder',
-      component: SaleOrder
     },
     {
       path: '/buy/:info',
@@ -63,6 +48,21 @@ export default new Router({
       path: '/buyCancle/:info',
       name: 'BuyCancle',
       component: BuyCancle
-    }
+    },
+    {
+      path: '/sale/:info',
+      name: 'Sale',
+      component: Sale
+    },
+    {
+      path: '/saleConfirm',
+      name: 'SaleConfirm',
+      component: SaleConfirm
+    },
+    {
+      path: '/saleOrder',
+      name: 'SaleOrder',
+      component: SaleOrder
+    },
   ]
 })

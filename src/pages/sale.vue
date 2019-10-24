@@ -5,15 +5,15 @@
     <ul class="order">
       <li class="price">
         <span>总价</span>
-        <span>￥200</span>
+        <span>￥{{details.orderAmount}}</span>
       </li>
       <li>
         <span>单价</span>
-        <span>￥7.13/USDT</span>
+        <span>￥{{details.usdtToCny}}/USDT</span>
       </li>
       <li>
         <span>数量</span>
-        <span>28.05 USDT</span>
+        <span>{{details.nums}} USDT</span>
       </li>
     </ul>
     <button class="btn" @click="showLayer = true">提交订单</button>
@@ -25,25 +25,35 @@
       <li>5.根据中国法律规定，虚拟货币不具有法偿性与强制性等货币属性，购买代表中国用户已知晓相关法律问题，愿自担相关风险。</li>
     </ul>
     <div v-if="showLayer">
-      <SalePay @close="showLayer = false" @confirm="confirm" />
+      <SalePay @close="showLayer = false" @confirmSale="confirmSale" />
     </div>
   </div>
 </template>
 
 <script>
 import SalePay from '@/components/salePay'
+import dess from '@/utils/dess'
+import util from '@/utils/util'
+import api from '@/utils/api'
 export default {
   name: 'Sale',
   data () {
     return {
-      showLayer: false
+      showLayer: false,
+      details: {}
     }
   },
   components: {
     SalePay
   },
+  mounted () {
+    const info = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    console.log(info)
+    this.details = info
+  },
   methods: {
-    confirm () {
+    confirmSale (name, bank, card) {
+      api.salePay(name, bank, card, this.$route.params.info)
     }
   }
 }
@@ -95,6 +105,7 @@ export default {
       }
     }
     .btn{
+      cursor: pointer;
       text-align: center;
       background-color: #2D85F0;
       border-radius: 8px;

@@ -3,7 +3,7 @@
     <ul class="nav">
       <li v-for="(item, index) in navBar" :key="index" :class="curIndex === index ? 'active' : ''" @click="switchs(index)" >{{item.title}}</li>
     </ul>
-    <table cellpadding="0">
+    <table cellpadding="0"  v-if="list2.length > 0" >
       <tr class="title">
         <th class="title_order" width="200px">订单号</th>
         <th>状态</th>
@@ -14,24 +14,28 @@
         <th>时间</th>
         <th>操作</th>
       </tr>
-      <tr class="item">
+      <tr class="item" v-for="(item, index) in list2" :key="index">
         <td class="order" width="200px">
-          <span>购买 1181231923129311812319231293123456</span>
+          <span>{{item.type === '买币' ? '购买' : '出售'}}  {{item.orderNo}}</span>
         </td>
-        <td>已取消</td>
-        <td>100000CNY</td>
-        <td>7.1CNY</td>
+        <td>{{item.status}}</td>
+        <td>{{item.cnyAmount}}CNY</td>
+        <td>{{item.type === '买币' ? cnyToUsdt : usdtToCny}}CNY</td>
         <td>1080USDT</td>
         <td>王冉冉</td>
-        <td>2019-10-28 16:34:28</td>
-        <td>
-          <span class="confirm" @click="showConfirm = true">确认支付</span>
-          <span class="cancle" @click="showCancle = true">取消订单</span>
+        <td>{{item.createTime}}</td>
+        <td width="140px">
+          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="showConfirm = true; orderAmount = item.orderAmount; customerId = '测试'">确认支付</span>
+          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
         </td>
       </tr>
     </table>
+    <div v-else class="empty">
+      <img src='@/assets/noData.png' alt="">
+      <p>暂无记录</p>
+    </div>
     <div v-if="showConfirm">
-      <ConfirmBuy @cancle="showConfirm = false" @confirmBuy="confirmBuy" />
+      <ConfirmBuy @cancle="showConfirm = false" :orderAmount="orderAmount" :customerId="customerId" @confirmBuy="confirmBuy" />
     </div>
     <div v-if="showCancle">
       <CancleOrder @cancle="showCancle = false" @confirmCancle="confirmCancle" />
@@ -42,6 +46,9 @@
 <script>
 import ConfirmBuy from '@/components/confirmBuy'
 import CancleOrder from '@/components/cancleOrder'
+import request from '@/utils/request'
+import util from '@/utils/util'
+import dess from '@/utils/dess'
 export default {
   name: 'Record',
   components: {
@@ -59,29 +66,77 @@ export default {
       }, {
         title: '全部',
       }],
+      orderId: '',
       curIndex: 0,
       showConfirm: false,
-      showCancle: false
+      showCancle: false,
+      list: [],
+      list2: [],
+      orderAmount: '',
+      customerId: '',
+      cnyToUsdt: '',
+      usdtToCny: ''
     }
   },
+  mounted () {
+    this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
+    this.usdtToCny = localStorage.getItem('usdtToCny')
+    const userId = this.$cookies.get('userId')
+    const outuid = this.$cookies.get('outuid')
+    request.post(`/third/v1/otc/myOrders/${userId}/${outuid}/0/0`).then((res) => {
+      this.list = res
+      this.filter()
+    })
+  },
   methods: {
+    filter () {
+      if (this.curIndex === 0) {
+        this.list2 = this.list.filter(function(item, index, array){
+            return item.status === '等待用户付款' || item.status === '等待商户付款'
+        });
+      } else if (this.curIndex === 1) {
+        this.list2 = this.list.filter(function(item, index, array){
+            return item.status === '交易完成'
+        });
+      } else if (this.curIndex === 2) {
+        this.list2 = this.list.filter(function(item, index, array){
+            return item.status === '商家取消' || item.status === '付款超时或用户取消'
+        });
+      } else if (this.curIndex === 3) {
+        this.list2 = this.list
+      }
+      console.log(this.list2)
+    },
     switchs (index) {
       this.curIndex = index
+      this.filter()
     },
     confirmBuy () {
       this.showConfirm = false
-      this.$message({
-        type: 'success',
-        message: '支付成功',
-        center: true
+      const outuid = this.$cookies.get('outuid')
+      const userId = this.$cookies.get('userId')
+      const m = dess.encryptByDESModeCBC(`userId=${userId}&outUserId=${outuid}&orderAmount=${this.orderAmount}&customerId=${this.customerId}`)
+      let data = {}
+      data.m = m
+      const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' }}
+      request.post('/third/v1/otc/submitOrder', JSON.stringify(data), config).then((res) => {
+        const {id, name, bankName, cardNo} = res
+        console.log(res);
+        this.$message({
+          type: 'success',
+          message: '支付成功',
+          center: true
+        })
       })
     },
-    confirmCancle () {
+    confirmCancle (orderId) {
       this.showCancle = false
-      this.$message({
-        type: 'success',
-        message: '取消成功',
-        center: true
+      request.post(`/third/v1/otc/cancelTrade/${orderId}`).then((res) => {
+        this.$message({
+          type: 'success',
+          message: '取消成功',
+          center: true
+        })
       })
     }
   }
@@ -124,6 +179,24 @@ export default {
         .title_order{
           text-align: left;
         }
+      }
+    }
+    .empty{
+      height: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      img{
+        width: 100px;
+        height: 100px;
+        margin-bottom: 10px;
+      }
+      p{
+        text-align: center;
+        font-size: 14px;
+        color: #999999;
       }
     }
     .item{

@@ -12,13 +12,12 @@
 </template>
 
 <script>
+import api from '@/utils/api'
 export default {
   name: 'App',
   methods: {
     toRecord () {
-      this.$router.push({
-        path: '/record'
-      })
+      api.orderList()
     }
   }
 }

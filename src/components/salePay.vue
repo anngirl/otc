@@ -63,10 +63,11 @@ export default {
   name: 'salePay',
   data () {
     return {
-      name: '',
-      bank: '',
-      card: '',
-      types: ['银行卡', '微信', '支付宝'],
+      name: '测试',
+      bank: '中国银行',
+      card: '6217900100010758715',
+      // types: ['银行卡', '微信', '支付宝'],
+      types: ['银行卡'],
       checkedValue: 0,
       checked,
       check
@@ -81,36 +82,40 @@ export default {
   },
   methods: {
     validate () {
-      if (this.bank.length < 1) {
-        this.$message({
-          message: '请输入收款银行',
-          type: 'warning',
-          canter: true
-        })
-      }
-      if (this.card.length < 1) {
-        this.$message({
-          message: '请输入银行卡号',
-          type: 'warning',
-          canter: true
-        })
-      }
-    },
-    confirm () {
-      if (this.name.length < 1) {
+      if (this.name.trim().length < 1) {
         this.$message({
           message: '请输入收款人姓名',
           type: 'warning',
           canter: true
         })
+        return false
       }
+      if ((this.bank).trim().length < 1) {
+        this.$message({
+          message: '请输入收款银行',
+          type: 'warning',
+          canter: true
+        })
+        return false
+      }
+      if (this.card.trim().length < 16  || this.card.trim().length > 19) {
+        this.$message({
+          message: '银行卡号不正确',
+          type: 'warning',
+          canter: true
+        })
+        return false
+      }
+    },
+    confirm () {
       if (this.checkedValue === 0) {
         if (this.validate() === false) return;
-        this.$router.push({
-          path: '/saleConfirm'
-        })
+        this.$emit('confirmSale', this.name, this.bank, this.card)
+        // this.$router.push({
+        //   path: '/saleConfirm'
+        // })
       } else if (this.checkedValue === 1) {
-        this.$message('其他支付方式')
+        // this.$message('其他支付方式')
       }
     },
     close () {
