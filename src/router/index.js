@@ -9,6 +9,10 @@ import Buy from "@/pages/buy"
 import BuyConfirm from '@/pages/buyConfirm'
 import BuyOrder from '@/pages/buyOrder'
 import BuyCancle from '@/pages/buyCancle'
+const routerPush = Router.prototype.push
+Router.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error=> error)
+}
 Vue.use(Router)
 
 export default new Router({
@@ -55,12 +59,12 @@ export default new Router({
       component: Sale
     },
     {
-      path: '/saleConfirm',
+      path: '/saleConfirm/:info',
       name: 'SaleConfirm',
       component: SaleConfirm
     },
     {
-      path: '/saleOrder',
+      path: '/saleOrder/:info',
       name: 'SaleOrder',
       component: SaleOrder
     },

@@ -21,11 +21,11 @@
         <td>{{item.status}}</td>
         <td>{{item.cnyAmount}}CNY</td>
         <td>{{item.type === '买币' ? cnyToUsdt : usdtToCny}}CNY</td>
-        <td>1080USDT</td>
+        <td>{{item.usdtAmount}}USDT</td>
         <td>王冉冉</td>
         <td>{{item.createTime}}</td>
         <td width="140px">
-          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="showConfirm = true; orderAmount = item.orderAmount; customerId = '测试'">确认支付</span>
+          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="toBuy(item.orderNo)">去支付</span>
           <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
         </td>
       </tr>
@@ -84,15 +84,21 @@ export default {
     const userId = this.$cookies.get('userId')
     const outuid = this.$cookies.get('outuid')
     request.post(`/third/v1/otc/myOrders/${userId}/${outuid}/0/0`).then((res) => {
-      this.list = res
+      this.list = res.obj
       this.filter()
     })
   },
   methods: {
+    toBuy (orderNo) {
+      const info = dess.encryptByDESModeCBC(`orderId=${orderNo}`)
+      this.$router.push({
+        path: `/buyConfirm/${info}`
+      })
+    },
     filter () {
       if (this.curIndex === 0) {
         this.list2 = this.list.filter(function(item, index, array){
-            return item.status === '等待用户付款' || item.status === '等待商户付款'
+            return item.status === '等待用户付款' || item.status === '等待商户付款' || item.status === '等待商家确认'
         });
       } else if (this.curIndex === 1) {
         this.list2 = this.list.filter(function(item, index, array){
@@ -115,18 +121,27 @@ export default {
       this.showConfirm = false
       const outuid = this.$cookies.get('outuid')
       const userId = this.$cookies.get('userId')
+      console.log(`userId=${userId}&outUserId=${outuid}&orderAmount=${this.orderAmount}&customerId=${this.customerId}`)
+      return;
       const m = dess.encryptByDESModeCBC(`userId=${userId}&outUserId=${outuid}&orderAmount=${this.orderAmount}&customerId=${this.customerId}`)
       let data = {}
       data.m = m
       const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' }}
       request.post('/third/v1/otc/submitOrder', JSON.stringify(data), config).then((res) => {
-        const {id, name, bankName, cardNo} = res
-        console.log(res);
-        this.$message({
-          type: 'success',
-          message: '支付成功',
-          center: true
-        })
+        if (res.code === 0) {
+          this.$message({
+            type: 'warning',
+            message: res.msg,
+            center: true
+          })
+        } else {
+          const {id, name, bankName, cardNo} = res.obj
+          this.$message({
+            type: 'success',
+            message: '支付成功',
+            center: true
+          })
+        }
       })
     },
     confirmCancle (orderId) {

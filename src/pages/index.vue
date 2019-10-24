@@ -54,11 +54,10 @@ export default {
   mounted () {
     this.balance = this.$cookies.get('balance')
     request.post('/third/v1/otc/getExchangeRate/11604').then((res) => {
-      localStorage.setItem('cnyToUsdt', res.cnyToUsdt)
-      localStorage.setItem('usdtToCny', res.usdtToCny)
-      
-      this.cnyToUsdt = res.cnyToUsdt
-      this.usdtToCny = res.usdtToCny
+      localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
+      localStorage.setItem('usdtToCny', res.obj.usdtToCny)
+      this.cnyToUsdt = res.obj.cnyToUsdt
+      this.usdtToCny = res.obj.usdtToCny
     })
   },
   methods: {
@@ -93,6 +92,8 @@ export default {
     change (index) {
       this.curIndex = index
       this.show = false
+      this.money = ''
+      this.number = ''
     },
     toSale () {
       if (this.number.length < 1) {
@@ -120,10 +121,6 @@ export default {
         return false
       }
       this.curIndex === 0 ? api.buy(this.money, this.number, this.cnyToUsdt) : api.sale(this.money, this.number, this.usdtToCny)
-      // const url = this.curIndex === 0 ? 'buy' : 'sale'
-      // this.$router.push({
-      //   path: url
-      // })
     },
     filter (number) {
       if (number.indexOf('.') > -1) {

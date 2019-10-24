@@ -5,19 +5,19 @@
     <ul class="order">
       <li class="price">
         <span>总&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：</span>
-        <span>￥200</span>
+        <span>￥{{details.orderAmount}}</span>
       </li>
       <li>
         <span>单&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;价：</span>
-        <span>￥7.13/USDT</span>
+        <span>￥{{usdtToCny}}/USDT</span>
       </li>
       <li>
         <span>数&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;量：</span>
-        <span>28.05 USDT</span>
+        <span>{{details.nums}}USDT</span>
       </li>
       <li>
         <span>收款方式：</span>
-        <span><span style="color: #2D85F0;">银行卡</span> 李子璇 1233 2344 3242 3444 888     中国银行</span>
+        <span><span style="color: #2D85F0;">银行卡</span> {{details.name}} {{details.card}}     {{details.bank}}</span>
       </li>
     </ul>
     <button class="btn" @click="confirm">确认出售</button>
@@ -32,17 +32,30 @@
 </template>
 
 <script>
+import util from '@/utils/util'
+import request from '@/utils/request'
+import api from '@/utils/api'
+import dess from '@/utils/dess'
 export default {
   name: 'SaleConfirm',
   data () {
     return {
+      details: {},
+      usdtToCny: ''
     }
+  },
+  mounted () {
+    const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    console.log(theRequest)
+    this.details = theRequest
+    this.usdtToCny = localStorage.getItem('usdtToCny')
   },
   methods: {
     confirm () {
-      this.$router.push({
-        path: '/saleOrder'
-      })
+      api.salePayConfirm(this.$route.params.info)
+      // this.$router.push({
+      //   path: '/saleOrder'
+      // })
     }
   }
 }

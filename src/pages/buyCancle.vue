@@ -66,10 +66,6 @@ export default {
     console.log(theRequest)
     this.theRequest = theRequest
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
-    // request.post(`/third/v1/otc/orderStatus/${theRequest.orderId}`).then((res) => {
-    //   console.log(res)
-    //   this.status = res.status
-    // })
   },
   methods: {
   }

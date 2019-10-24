@@ -15,8 +15,8 @@ var outuid = '93E109400B20A29440FD597894991046'
 var userId = 11604
 function getExchangeRate() {
   request.post('/third/v1/otc/getExchangeRate/11604').then((res) => {
-    localStorage.setItem('cnyToUsdt', res.cnyToUsdt)
-    localStorage.setItem('usdtToCny', res.usdtToCny)
+    localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
+    localStorage.setItem('usdtToCny', res.obj.usdtToCny)
   })
 }
 function orderList () {
@@ -42,11 +42,35 @@ function buyPay(customerId, info) {
   data.m = m
   const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' }}
   request.post('/third/v1/otc/submitOrder', JSON.stringify(data), config).then((res) => {
-    const {id, name, bankName, cardNo} = res
-    const info = dess.encryptByDESModeCBC(`customerId=${customerId}&orderAmount=${orderAmount}&userId=${userId}&nums=${theRequest.nums}&orderId=${id}&payee=${name}&payee_bank=${bankName}&pay_account=${cardNo}&outuid=${outuid}`)
-    router.push({
-      path: `/buyConfirm/${info}`
-    })
+    if (res.code === 0) {
+      Message.warning({
+        message: res.msg,
+        center: true
+      })
+    } else {
+      const {id, name, bankName, cardNo} = res.obj
+      const info = dess.encryptByDESModeCBC(`customerId=${customerId}&orderAmount=${orderAmount}&userId=${userId}&nums=${theRequest.nums}&orderId=${id}&payee=${name}&payee_bank=${bankName}&pay_account=${cardNo}&outuid=${outuid}`)
+      router.push({
+        path: `/buyConfirm/${info}`
+      })
+    }
+  })
+}
+
+// 完成转账
+function completeBuy (info) {
+  const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
+  request.post(`/third/v1/otc/payment/${theRequest.orderId}`).then((res) => {
+    if (res.code === 1) {
+      router.push({
+        path: `/buyOrder/${info}`
+      })
+    } else {
+      Message.warning({
+        message: res.msg,
+        center: true
+      })
+    }
   })
 }
 // 取消购买
@@ -66,13 +90,12 @@ function sale(money, number, price) {
   })
 }
 
-// 确认出售
+// 跳转至确认出售页面
 function salePay (name, bank, card, info) {
   const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
-  const m = dess.encryptByDESModeCBC(`userId=${theRequest.userId}&outUserId=${outuid}&orderAmount=${theRequest.nums}&name=${name}&cardno=${card}&bankname=${bank}`);
-
-  let data = {}
-  data.m = m
+  // const m = dess.encryptByDESModeCBC(`userId=${theRequest.userId}&outUserId=${outuid}&orderAmount=${theRequest.nums}&name=${name}&cardno=${card}&bankname=${bank}`);
+  // let data = {}
+  // data.m = m
   const numss = parseFloat(balance) - parseFloat(theRequest.nums)
   if (numss < 0) {
     Message.warning({
@@ -80,45 +103,48 @@ function salePay (name, bank, card, info) {
       center: true
     })
     return
+  } else {
+    const info2 = dess.encryptByDESModeCBC(`name=${name}&bank=${bank}&card=${card}&orderAmount=${theRequest.orderAmount}&nums=${theRequest.nums}`)
+    router.push({
+      path: `/saleConfirm/${info2}`
+    })
   }
+}
+// 确认出售
+function salePayConfirm (info) {
+  const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
+  console.log(theRequest)
+  // return
+  const m = dess.encryptByDESModeCBC(`userId=${userId}&outUserId=${outuid}&orderAmount=${theRequest.nums}&name=${theRequest.name}&cardno=${theRequest.card}&bankname=${theRequest.bank}`);
+  let data = {}
+  data.m = m
   const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' }}
   request.post('/third/v1/otc/withdraw', JSON.stringify(data), config).then((res) => {
     console.log(res)
-    const balance2 = parseFloat(balance) - parseFloat(theRequest.nums)
-    this.$cookies.set('balance', balance2)
-    encryptByDESModeCBC("orderNo="+res.msg+"&order_money="+theRequest.orderAmount+"&orderAmount="+theRequest.nums+"&name="+collection_name+"&cardno="+cardno+"&bankname="+collection_bank+"&userId="+theRequest.userId+"&outuid="+outuids+"&balance="+balancess)
-
-    // window.location.href=encodeURI("myOrder_sale.html?"+encryptByDESModeCBC("orderNo="+res.msg+"&order_money="+theRequest.orderAmount+"&orderAmount="+theRequest.nums+"&name="+collection_name+"&cardno="+cardno+"&bankname="+collection_bank+"&userId="+theRequest.userId+"&outuid="+outuids+"&balance="+balancess));
+    if (res.code === 0){
+      Message.warning({
+        message: res.msg,
+        center: true
+      })
+    } else if (res.code === 1) {
+      const balance2 = parseFloat(balance) - parseFloat(theRequest.nums)
+      VueCookies.set('balance', balance2)
+      const info2 = dess.encryptByDESModeCBC(`orderNo=${res.msg}&orderAmount=${theRequest.orderAmount}&nums=${theRequest.nums}&name=${theRequest.name}&cardno=${theRequest.card}&bankname=${theRequest.bank}&userId=${userId}&outuid=${outuid}&balance=${balance2}`)
+      router.push({
+        path: `/saleOrder/${info2}`
+      })
+    }
   })
-  // $.ajax({
-  //   type: "post",
-  //   url: urls+"/third/v1/otc/withdraw",
-  //   dataType: 'json',
-  //   headers:{
-  //     "Content-Type":"application/json"
-  //   },
-  //   data:JSON.stringify(data),
-  //   success: function (res) {
-  //     if (res.code==1) {
-  //       var users=balances-nums;
-  //   setCookie("balance", users);
-  //   var balancess=getCookie("balance");
-  //       window.location.href=encodeURI("myOrder_sale.html?"+encryptByDESModeCBC("orderNo="+res.msg+"&order_money="+theRequest.orderAmount+"&orderAmount="+theRequest.nums+"&name="+collection_name+"&cardno="+cardno+"&bankname="+collection_bank+"&userId="+theRequest.userId+"&outuid="+outuids+"&balance="+balancess));
-  //     }else if(res.code==0){
-  //       alert(res.msg);
-  //     }
-  //   },
-  //   error:function(res){
-  //      alert(res.msg);
-  //   }
-  // })
 }
+
 export default {
   orderList,
   getExchangeRate,
   buy,
   sale,
   buyPay,
+  completeBuy,
   cancleBuy,
-  salePay
+  salePay,
+  salePayConfirm
 }

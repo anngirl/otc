@@ -7,20 +7,20 @@
     <ul class="lists">
       <li class="price">
         <p>总价：</p>
-        <p>200.00CNY</p>
+        <p>{{details.orderAmount}}CNY</p>
       </li>
       <li>
         <p>数量：</p>
-        <p>140.9988USDT</p>
+        <p>{{details.nums}}USDT</p>
       </li>
       <li>
         <p>单价：</p>
-        <p>7.1CNY</p>
+        <p>{{usdtToCny}}CNY</p>
       </li>
     </ul>
     <div class="order_num">
       <p>订单号：</p>
-      <p>1181231923129311812319231293123456</p>
+      <p>{{details.orderNo}}</p>
     </div>
     <div class="order_status">
       <p>订单状态</p>
@@ -36,19 +36,27 @@
 </template>
 
 <script>
+import util from '@/utils/util'
+import dess from '@/utils/dess'
+import api from '@/utils/api'
 export default {
   name: 'saleOrder',
   data () {
     return {
+      details: {},
+      usdtToCny: ''
     }
   },
   components: {
   },
+  mounted () {
+    const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
+    this.details = theRequest
+    this.usdtToCny = localStorage.getItem('usdtToCny')
+  },
   methods: {
     toOrder () {
-      this.$router.push({
-        path: '/record'
-      })
+      api.orderList()
     }
   }
 }

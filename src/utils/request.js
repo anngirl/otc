@@ -7,14 +7,15 @@ const request = axios.create({
 });
 
 request.interceptors.response.use(function (res) {
-  if (res.data.code === 1) {
-    return Promise.resolve(res.data.obj)
-  } else {
-    Message.warning({
-      message: res.data.msg,
-      center: true
-    })
-  }
+  // if (res.data.code === 1) {
+  console.log(res.data)
+  return Promise.resolve(res.data)
+  // } else {
+    // Message.warning({
+    //   message: res.data.msg,
+    //   center: true
+    // })
+  // }
 }, function (error) {
   return Promise.reject(error);
 })

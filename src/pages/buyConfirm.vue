@@ -7,7 +7,7 @@
     <ul class="lists">
       <li class="price">
         <p>总价：</p>
-        <p>{{details.orderAmount}}CNY</p>
+        <p>{{details.cnyAmount}}CNY</p>
       </li>
       <li>
         <p>数量：</p>
@@ -22,13 +22,13 @@
       <p>卖家收款方式</p>
       <p></p>
     </div>
-    <div class="order_status_pay">
-      <p>请务必使用本人（{{details.customerId}}） 的支付方式向一下账号自行转账</p>
+    <div class="order_status_pay" v-if="customerId">
+      <p>请务必使用本人（{{customerId}}） 的支付方式向一下账号自行转账</p>
     </div>
     <ul class="pay_info">
       <li class="pay_type">银行卡</li>
-      <li class="pay_name">{{details.payee}}</li>
-      <li class="card_info">{{ details.pay_account }} ， {{details.payee_bank}}</li>
+      <li class="pay_name">{{details.name}}</li>
+      <li class="card_info">{{ details.cardNo }} ， {{details.bankName}}</li>
     </ul>
     <div class="confirm_pay">
       <div class="confirm_pay_left">
@@ -36,7 +36,7 @@
           <p>待转账，请向对方转账</p>
           <p><span>{{firstTime}}</span>:<span>{{lastTime}}</span></p>
         </div>
-        <p class="confirm_pay_left_bottom">{{details.orderAmount}}<span>CNY</span></p>
+        <p class="confirm_pay_left_bottom">{{details.cnyAmount}}<span>CNY</span></p>
       </div>
       <div class="confirm_pay_right">
         <button class="confirm" @click="complete">我已完成转账</button>
@@ -77,7 +77,8 @@ export default {
       details: {},
       cnyToUsdt: '',
       firstTime: '00',
-      lastTime: '00'
+      lastTime: '00',
+      customerId: ''
     }
   },
   components: {
@@ -86,26 +87,34 @@ export default {
   mounted () {
     const _this = this
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
-    this.details = theRequest
+    console.log(theRequest)
+    this.customerId = theRequest.customerId
+    console.log(this.customerId)
+    // this.details = theRequest
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
     request.post(`/third/v1/otc/orderStatus/${theRequest.orderId}`).then((res) => {
-      this.$cookies.set('times', res.countDown)
+      this.details = res.obj
+      this.$cookies.set('times', res.obj.countDown)
       setInterval(() => {
         _this.antitime()
       }, 1000)
-      if (res.status === "付款超时或用户取消" || res.status === "交易完成" || res.status === "商家取消") {
+      if (res.obj.status === "付款超时或用户取消" || res.obj.status === "商家取消") {
         const userId = this.$cookies.get('userId')
         const outuid = this.$cookies.get('outuid')
         const buyOrderStatus = dess.encryptByDESModeCBC(`userId=${userId}&outuid=${outuid}&orderNo=${theRequest.orderId}&cnyAmount=${theRequest.orderAmount}&usdtAmount=${theRequest.nums}`)
         this.$router.push({
           path: `/buyCancle/${this.$route.params.info}`
         })
-      } else if (res.status === "交易完成") {
+      } else if (res.obj.status === "交易完成") {
         this.$router.push({
           path: '/'
         })
       }
     })
+  },
+  destroyed () {
+    const _this = this
+    clearInterval(_this.antitime())
   },
   methods: {
     confirmCancle () {
@@ -113,9 +122,7 @@ export default {
       api.cancleBuy(this.$route.params.info)
     },
     complete () {
-      this.$router.push({
-        path: `/buyOrder/${this.$route.params.info}`
-      })
+      api.completeBuy(this.$route.params.info)
     },
     timestampToTime(timestamp) {
         var date = new Date(timestamp * 1000);
@@ -143,7 +150,7 @@ export default {
       var m = Math.floor(deltaTime / 1000 / 60 % 60);
       var s = Math.floor(deltaTime / 1000 % 60);
       var timeStr = "" + (m/10>=1?m=m:m="0"+m) + (s/10>=1?s=s:s="0"+s)
-      console.log(parseInt(timeStr))
+      // console.log(parseInt(timeStr))
       if(parseInt(timeStr) < 10) {
         this.$router.push({
           path: `/buyCancle/${this.$route.params.info}`
