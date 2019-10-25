@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script src="https://cdn.bootcss.com/jquery/2.2.0/jquery.min.js"></script>
+</head>
+<body>
+	
+</body>
+<script type="text/javascript">
+	function getQueryString(name) {
+		var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null) {
+		return unescape(r[2]);
+		}
+		return null;
+	}
+	$(function(){
+		var sign = encodeURIComponent(getQueryString("sign"));
+		console.log(sign)
+		var appid=getQueryString("appid");
+		var outuid=getQueryString("outuid");
+		var balance=getQueryString("balance");
+		var timestamp=getQueryString("timestamp");
+		setCookie("outuid", outuid);
+		setCookie("userId", appid);
+		setCookie("balance", balance);
+		console.log("sign="+sign+"&appid="+appid+"&outuid="+outuid+"&balance="+balance+"&timestamp="+timestamp)
+		$.ajax({
+	        type: "get",
+	        crossDomain: true,
+	        url: "http://47.244.216.195:8083/third/v1/otc/checkSign?"+"sign="+sign+"&appid="+appid+"&outuid="+outuid+"&balance="+balance+"&timestamp="+timestamp,
+	        success: function (res) {
+	        	if (res.code == 1) {
+	        		window.location.href='./index.html'
+	        	}else{
+	        		alert(res.msg);
+	        	}
+	        }
+	    })
+	})
+	function setCookie(cname,cvalue) {
+	  	document.cookie = cname + "=" + cvalue + ";path=/";
+	}
+</script>
+</html>

@@ -22,8 +22,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Verify',
-      component: Verify
+      name: 'Index',
+      component: Index
     },
     {
       path: '/verify',
