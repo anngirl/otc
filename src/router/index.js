@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Verify from "@/pages/verify";
 import Index from '@/pages/index'
 import Record from '@/pages/record'
 import Sale from '@/pages/sale'
@@ -9,6 +10,7 @@ import Buy from "@/pages/buy"
 import BuyConfirm from '@/pages/buyConfirm'
 import BuyOrder from '@/pages/buyOrder'
 import BuyCancle from '@/pages/buyCancle'
+import Error from '@/pages/error'
 const routerPush = Router.prototype.push
 Router.prototype.push = function push(location) {
   return routerPush.call(this, location).catch(error=> error)
@@ -20,8 +22,13 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Index',
-      component: Index
+      name: 'Verify',
+      component: Verify
+    },
+    {
+      path: '/verify',
+      name: 'Verify',
+      component: Verify
     },
     {
       path: '/index',
@@ -67,6 +74,11 @@ export default new Router({
       path: '/saleOrder/:info',
       name: 'SaleOrder',
       component: SaleOrder
+    },
+    {
+      path: '/error',
+      name: 'Error',
+      component: Error
     },
   ]
 })

@@ -4,7 +4,8 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 Vue.config.productionTip = false
-
+import axios from 'axios';
+Vue.prototype.$axios = axios;
 // element
 import { Message } from 'element-ui';
 Vue.prototype.$message = Message

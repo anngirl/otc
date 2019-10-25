@@ -53,6 +53,7 @@ export default {
   },
   mounted () {
     const userId = this.$cookies.get('userId')
+    this.balance = this.$cookies.get('balance')
     request.post(`/third/v1/otc/getExchangeRate/${userId}`).then((res) => {
       localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
       localStorage.setItem('usdtToCny', res.obj.usdtToCny)
@@ -190,6 +191,7 @@ export default {
       display: flex;
       justify-content: space-between;
       input{
+        width: 270px;
         border: none;
         margin-left: 1vw;
       }

@@ -192,6 +192,7 @@ export default {
       }
     }
     table{
+      margin-top: 20px;
       width: 100%;
       .title{
         font-family: PingFangSC-Medium;

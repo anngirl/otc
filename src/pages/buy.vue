@@ -27,10 +27,17 @@
         </div>
       </li>
       <li>
-        <p>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</p>
+        <p v-if="checkedValue === '银行卡'">姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</p>
+        <p v-if="checkedValue === '支付宝'" style="font-size: 14px;">姓名/手机号：</p>
+        <p v-if="checkedValue === '微信'">账&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：</p>
         <div>
-          <input type="text" v-model="name" class="input" placeholder="请输入付款账号姓名">
-          <p class="red">* 请输入您用于转账的银行卡对应的姓名，并确保所输姓名与实际付款账户一致，否则将导致您的资金损失</p>
+          <input v-if="checkedValue === '银行卡'" type="text" v-model="name" class="input" placeholder="请输入付款账号姓名">
+          <input v-if="checkedValue === '支付宝'" type="text" v-model="name" class="input" placeholder="请输入付款账号姓名/手机号">
+          <input v-if="checkedValue === '微信'" type="text" v-model="name" class="input" placeholder="请输入付款账号">
+
+          <p class="red" v-if="checkedValue === '银行卡'">* 请输入您用于转账的{{checkedValue}}对应的姓名，并确保所输姓名与实际付款账户一致，否则将导致您的资金损失</p>
+          <p class="red" v-if="checkedValue === '支付宝'">* 请输入您用于付款的{{checkedValue}}对应的姓名/手机号，并确保所输姓名与实际付款账户一致，否则将导致您的资金损失</p>
+          <p class="red" v-if="checkedValue === '微信'">* 请输入您用于付款的{{checkedValue}}账号，并确保所输姓名与实际付款账户一致，否则将导致您的资金损失</p>
         </div>
       </li>
     </ul>
@@ -99,15 +106,36 @@ export default {
   },
   methods: {
     validate () {
-      var re=/[\u4E00-\u9FA5\uF900-\uFA2D]/;
-      if (!(re.test(this.name))) {
-        this.$message({
-          message: '请输入正确姓名',
-          type: 'warning',
-          center: true
-        })
-        return false
+      if (this.checkedValue === '银行卡') {
+        const re=/[\u4E00-\u9FA5\uF900-\uFA2D]/;
+        if (!(re.test(this.name))) {
+          this.$message({
+            message: '请输入正确姓名',
+            type: 'warning',
+            center: true
+          })
+          return false
+        }
+      } else {
+        if (this.name.length < 1) {
+          this.$message({
+            message: this.checkedValue === '微信' ? '微信账号不能为空' : '支付宝姓名/手机号不能为空',
+            type: 'warning',
+            center: true
+          })
+          return false
+        }
+        const re=/^[A-Za-z0-9\u4e00-\u9fa5]+$/;
+        if (!(re.test(this.name))) {
+          this.$message({
+            message: '禁止输入特殊字符',
+            type: 'warning',
+            center: true
+          })
+          return false
+        }
       }
+      
     },
     submit() {
       if (this.validate() === false) return;

@@ -5,22 +5,11 @@ import router from '../router/index'
 import {Message} from 'element-ui'
 import VueCookies from 'vue-cookies'
 
-VueCookies.set('balance', 9000)
-VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
-VueCookies.set('userId', 11997) //11604
+const outuid = VueCookies.get("outuid");
+const userId = VueCookies.get("userId");
+const balance = VueCookies.get("balance");
 
-let balance = VueCookies.get('balance')
-let outuid = VueCookies.get('outuid')
-let userId = VueCookies.get('userId')
 
-function verify () {
-  // const url = '357a637232e23db330b002795b48708a15b97d9d81badbe41f03eef17c32a04fd712a884c1d05c428e0c935d2c5b7da475a84d61011e0868db82dd2232191d81b27bf9768a821ac2fead13ec94f3d8b40745b823e051c7918e37006447878d9a01fa16de461b1b3a';
-  // const theRequest = util.decodeURI(dess.decryptByDESModeEBC(url))
-  console.log('咱也不知道干啥')
-  // VueCookies.set('balance', theRequest.balance)
-  // VueCookies.set('outuid', theRequest.outuid)
-  // VueCookies.set('userId', theRequest.userId)
-}
 
 function orderList () {
   const info = dess.encryptByDESModeCBC(`userId=${userId}&outuid=${outuid}&balance=${balance}`)
@@ -113,6 +102,8 @@ function sale(money, number, price) {
 // 跳转至确认出售页面
 function salePay (name, bank, card, info) {
   const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
+  console.log(balance)
+  console.log(theRequest.nums)
   const numss = parseFloat(balance) - parseFloat(theRequest.nums)
   if (numss < 0) {
     Message.warning({
@@ -154,7 +145,6 @@ function salePayConfirm (info) {
 
 
 export default {
-  verify,
   orderList,
   buy,
   sale,

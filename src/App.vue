@@ -1,37 +1,49 @@
 <template>
   <div id="app">
-    <header class="header">
-      <router-link to="/">
+    <header class="header" v-if="showHeader">
+      <router-link to="/index">
         <img src="@/assets/logo.png" class="logo" alt="">
       </router-link>
       <button @click="toRecord">交易记录</button>
     </header>
     <router-view/>
-    <footer class="footer">
-      版权所有 © 2017 Mozilla Firefox. 北京灵思创奇信息技术有限公司
-    </footer>
   </div>
 </template>
 
 <script>
 import api from '@/utils/api'
+import dess from '@/utils/dess'
 export default {
   name: 'App',
-  created () {
-    api.verify()
+  data () {
+    return {
+      showHeader: false,
+      info: ''
+    }
   },
   mounted () {
-    // document.oncontextmenu = function(){
-    // 　return false;
-    // }
-    // document.onkeydown = function(e) {	
-		//   if (e.ctrlKey && (e.keyCode === 65 || e.keyCode === 67 || e.keyCode === 73 || e.keyCode === 74 || e.keyCode 						   === 80 || e.keyCode === 83 || e.keyCode === 85 || e.keyCode === 86 || e.keyCode === 117)) {
-		//  	  return false;
-		//   } 
-		//   if(e.keyCode==18||e.keyCode==123){
-		//   	return false
-		//   }
-	  // }
+    if (this.$route.path === '/' || this.$route.path === '' || this.$route.path === 'error') {
+      this.showHeader = false
+    } else {
+      this.showHeader = true
+    }
+    if (document.referrer == '') {
+      this.showHeader = false
+      this.$router.replace({
+        path: '/error'
+      })
+    }
+    document.oncontextmenu = function(){
+    　return false;
+    }
+    document.onkeydown = function(e) {	
+		  if (e.ctrlKey && (e.keyCode === 65 || e.keyCode === 67 || e.keyCode === 73 || e.keyCode === 74 || e.keyCode  === 80 || e.keyCode === 83 || e.keyCode === 85 || e.keyCode === 86 || e.keyCode === 117)) {
+		 	  return false;
+		  } 
+		  if(e.keyCode==18||e.keyCode==123){
+		  	return false
+		  }
+	  }
   },
   methods: {
     toRecord () {
