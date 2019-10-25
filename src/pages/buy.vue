@@ -18,24 +18,20 @@
       <li>
         <p>购买方式：</p>
         <div class="radio">
-          <label v-for="(item, index) in types" :key="index">
-            <img :src="checkedValue === index ? item.selectIcon : item.icon" class="icon" alt="">
-            <input v-model="checkedValue" type="radio" name="Q3" :value="index"/>
-            <span :class="checkedValue === index ? 'active' : ''">{{item.text}}</span>
-            <img :src="checkedValue === index ? checked : check" class="check" alt="">
+          <label v-for="(item, index) in types" :key="index" :class="item.value == 0 ? 'nopointer' : ''">
+            <img :src="checkedValue === item.text ? item.selectIcon : item.icon" class="icon" alt="">
+            <input v-model="checkedValue" type="radio" name="Q3" :value="item.text"/>
+            <span :class="checkedValue === item.text ? 'active' : ''">{{item.text}}</span>
+            <img :src="checkedValue === item.text ? checked : check" class="check" alt="">
           </label>
         </div>
       </li>
-      <li v-show="checkedValue === 0">
+      <li>
         <p>姓&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：</p>
         <div>
           <input type="text" v-model="name" class="input" placeholder="请输入付款账号姓名">
           <p class="red">* 请输入您用于转账的银行卡对应的姓名，并确保所输姓名与实际付款账户一致，否则将导致您的资金损失</p>
         </div>
-      </li>
-      <li v-show="checkedValue === 1 || checkedValue === 2">
-        <p>付&nbsp;款&nbsp;码：</p>
-        <img src="@/assets/upload.png" class="upload" alt="">
       </li>
     </ul>
     <button class="btn" @click="submit" :disabled="disabled">提交订单</button>
@@ -65,12 +61,8 @@ export default {
   name: 'Buy',
   data () {
     return {
-      types: [{
-        text: '银行卡',
-        icon: card,
-        selectIcon: card2
-      }],
-      checkedValue: 0,
+      types: [],
+      checkedValue: '',
       checked,
       check,
       name: '',
@@ -80,15 +72,30 @@ export default {
       disabled: false
     }
   },
-  watch:{
-    checkedValue:function(){
-    }
-  },
   mounted () {
     const info = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
     this.totPrice = info.orderAmount
     this.nums = info.nums
     this.price = info.cnyToUsdt
+    this.types = [{
+      text: '银行卡',
+      icon: card,
+      selectIcon: card2,
+      value: localStorage.getItem('bank')
+    }, {
+      text: '支付宝',
+      value: localStorage.getItem('zfb'),
+      icon: alipay,
+      selectIcon: alipay2
+    }, {
+      text: '微信',
+      value: localStorage.getItem('wx'),
+      icon: wechat,
+      selectIcon: wechat2
+    }]
+    if (parseInt(localStorage.getItem('bank')) === 1) {
+      this.checkedValue = '银行卡'
+    }
   },
   methods: {
     validate () {
@@ -106,7 +113,15 @@ export default {
       if (this.validate() === false) return;
       this.disabled = true
       const that = this
-      api.buyPay(this.name, this.$route.params.info)
+      let payWay = 0
+      if (this.checkedValue === '银行卡') {
+        payWay = 3
+      } else if (this.checkedValue === '支付宝') {
+        payWay = 1
+      } else if (this.checkedValue === '微信') {
+        payWay = 2
+      }
+      api.buyPay(this.name, this.$route.params.info, payWay)
       setTimeout(() => {
         that.disabled = false
       }, 5000)
@@ -150,10 +165,6 @@ export default {
         }
         p:nth-child(1){
           width: 90px;
-          // display: inline-block;
-          // text-align-last:justify;
-          // text-align:justify;
-          // text-justify:distribute-all-lines; // 兼容IE浏览器
           color: #333333;
           font-size: 18px;
           font-family: PingFangSC-Regular;
@@ -195,6 +206,10 @@ export default {
               height: 16px;
               
               display: block;
+            }
+            &.nopointer{
+              pointer-events: none;
+              opacity: 0.7;
             }
           }
         }

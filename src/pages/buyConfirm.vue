@@ -22,13 +22,28 @@
       <p>卖家收款方式</p>
       <p></p>
     </div>
-    <div class="order_status_pay" v-if="customerId">
+    <div class="order_status_pay" v-if="customerId && details.payWay == 3">
       <p>请务必使用本人（{{customerId}}） 的支付方式向一下账号自行转账</p>
     </div>
-    <ul class="pay_info">
+    <div class="order_status_pay" v-if="details.payWay == 2 || details.payWay == 1">
+      <p>请使用<span v-text="details.payWay == 2 ? '微信' : '支付宝'" />向以下账户自行转账</p>
+    </div>
+    <ul class="pay_info" v-if="details.payWay == 3">
       <li class="pay_type">银行卡</li>
       <li class="pay_name">{{details.name}}</li>
       <li class="card_info">{{ details.cardNo }} ， {{details.bankName}}</li>
+    </ul>
+    <ul class="pay_info pay_info2" v-if="details.payWay == 1">
+      <li class="pay_type2">收款人：<span>{{details.name}}</span></li>
+      <!-- <li class="pay_name2">支付宝手机号/账号：<span>13718391141</span></li> -->
+      <li class="card_info2">支付宝收款码：
+        <img src="@/assets/icon.png" class="icon" alt="">
+        <img class="code" @click="showImg = true" :src="details.imgUrl" alt="">
+      </li>
+    </ul>
+    <ul class="pay_info3" v-if="details.payWay == 2">
+      <img :src="details.imgUrl" @click="showImg = true" alt="">
+      <span>{{details.name}}</span>
     </ul>
     <div class="confirm_pay">
       <div class="confirm_pay_left">
@@ -58,6 +73,9 @@
         <p class="answer">您购买的USDT已在平台系统完成托管锁定，确保您的资金安全</p>
       </li>
     </ul>
+    <div v-if="showImg">
+      <Code :imgUrl="details.imgUrl" @close="showImg = false" />
+    </div>
     <div v-if="showLayer">
       <CancleOrder @cancle="showLayer = false" @confirmCancle="confirmCancle" />
     </div>
@@ -65,10 +83,12 @@
 </template>
 <script>
 import CancleOrder from '@/components/cancleOrder'
+import Code from '@/components/Code'
 import dess from '@/utils/dess'
 import util from '@/utils/util'
 import request from '@/utils/request'
 import api from '@/utils/api'
+let timer = null
 export default {
   name: 'saleOrder',
   data () {
@@ -79,21 +99,24 @@ export default {
       firstTime: '00',
       lastTime: '00',
       customerId: '',
-      disabled: false
+      disabled: false,
+      showCode: false,
+      showImg: false
     }
   },
   components: {
-    CancleOrder
+    CancleOrder,
+    Code
   },
   mounted () {
     const _this = this
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
     this.customerId = theRequest.customerId
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
-    request.post(`/third/v1/otc/orderStatus/${theRequest.orderId}`).then((res) => {
+    request.post(`/third/v1/otc/tradeStatus/${theRequest.orderId}`).then((res) => {
       this.details = res.obj
       this.$cookies.set('times', res.obj.countDown)
-      setInterval(() => {
+      timer = setInterval(() => {
         _this.antitime()
       }, 1000)
       if (res.obj.status === "付款超时或用户取消" || res.obj.status === "商家取消") {
@@ -110,13 +133,14 @@ export default {
       }
     })
   },
-  destroyed () {
+  beforeDestroy () {
     const _this = this
-    clearInterval(_this.antitime())
+    clearInterval(timer)
   },
   methods: {
     confirmCancle () {
       // 取消购买
+      this.showLayer = false
       api.cancleBuy(this.$route.params.info)
     },
     complete () {
@@ -153,7 +177,7 @@ export default {
       var m = Math.floor(deltaTime / 1000 / 60 % 60);
       var s = Math.floor(deltaTime / 1000 % 60);
       var timeStr = "" + (m/10>=1?m=m:m="0"+m) + (s/10>=1?s=s:s="0"+s)
-      if(parseInt(timeStr) < 10) {
+      if(parseInt(timeStr) < 3) {
         this.$router.push({
           path: `/buyCancle/${this.$route.params.info}`
         })
@@ -259,6 +283,7 @@ export default {
       border-bottom: solid 1px #D8D8D8;
       margin: 3.3vh auto 0;
       padding-bottom: 3vh;
+      margin-top: 6.1vh;
       li{
         list-style: none;
         &.pay_type{
@@ -285,9 +310,55 @@ export default {
         }
       }
     }
+    .pay_info2{
+      li{
+        list-style: none;
+        font-size: 14px;
+        color: #282633;
+        margin-right: 120px;
+        span{
+          margin-left: 13px;
+          color: #686770;
+        }
+        &.card_info2{
+          display: flex;
+          align-items: center;
+          .icon{
+            width: 63px;
+            height: 19px;
+            margin-left: 13px;
+            margin-right: 4px;
+          }
+          .code{
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+          }
+          font-family: PingFangSC-Regular;
+        }
+      }
+    }
+    .pay_info3{
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      img{
+        margin-top: 1.9vh;
+        margin-bottom: 0.7vh;
+        width: 100px;
+        height: 100px;
+        cursor: pointer;
+      }
+      span{
+        line-height: 30px;
+        height: 30px;
+        color: #000000;
+        font-size: 14px;
+        padding-bottom: 0.7vh;
+      }
+    }
     .confirm_pay{
       background-color: rgba(#2D85F0 , 0.1);
-      margin-top: 6.1vh;
       width: 1226px;
       height: 124px;
       display: flex;
@@ -378,7 +449,6 @@ export default {
           line-height: 28px;
         }
       }
-      
     }
   }
 </style>

@@ -19,7 +19,7 @@
             <span>收款方式：</span>
           </p>
           <div class="radio">
-            <label v-for="(item, index) in types" :key="index" :class="item.value == 1 ? 'nopointer' : ''">
+            <label v-for="(item, index) in types" :key="index" :class="item.value == 0 ? 'nopointer' : ''">
               <img :src="checkedValue === item.text ? checked : check" alt="">
               <input v-model="checkedValue" type="radio" name="Q3" :value="item.text"/>
               <span>{{item.text}}</span>
@@ -47,7 +47,7 @@
           </p>
           <div class="upload">
             <input type="file" @change="addImg" multiple=false ref="inputer" accept="image/jpg,image/jpeg,image/png,image/bmp"/>
-            <img :src="imgSrc !== '' ? imgSrc : upload" @click="upload" alt="">
+            <img :src="imgSrc !== '' ? imgSrc : upload" alt="">
             <p>请上传收款二维码</p>
           </div>
         </div>
@@ -66,9 +66,9 @@ export default {
   name: 'salePay',
   data () {
     return {
-      name: '测试',
-      bank: '中国银行',
-      card: '6217900100010758715',
+      name: '',
+      bank: '',
+      card: '',
       types: [],
       checkedValue: '',
       checked,
@@ -86,17 +86,20 @@ export default {
     this.types = [{
       text: '银行卡',
       value: localStorage.getItem('bank')
-    }, {
-      text: '支付宝',
-      value: localStorage.getItem('zfb')
-    }, {
-      text: '微信',
-      value: localStorage.getItem('wx')
-    }]
+    }
+    // , {
+    //   text: '支付宝',
+    //   value: localStorage.getItem('zfb')
+    // }, {
+    //   text: '微信',
+    //   value: localStorage.getItem('wx')
+    // }
+    ]
+    if (parseInt(localStorage.getItem('bank')) === 1) {
+      this.checkedValue = '银行卡'
+    }
   },
   methods: {
-    upload () {
-    },
     addImg (event) {
       const inputDOM = this.$refs.inputer.files[0]
       let formData = new FormData()
@@ -128,8 +131,7 @@ export default {
       if (this.checkedValue === '银行卡') {
         if (this.validate1() === false) return;
         this.$emit('confirmSale', this.name, this.bank, this.card)
-      } else if (this.checkedValue === 1) {
-        // this.$message('其他支付方式')
+      } else if (this.checkedValue === '支付宝' || this.checkedValue === '微信') {
       }
     },
     validate1 () {

@@ -24,7 +24,7 @@
         <td align="center">{{item.createTime}}</td>
         <td align="right">
           <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="toBuy(item.orderNo)">去支付</span>
-          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
+          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单{{item.orderNo}}</span>
         </td>
       </tr>
     </table>
@@ -96,15 +96,15 @@ export default {
     filter () {
       if (this.curIndex === 0) {
         this.list2 = this.list.filter(function(item, index, array){
-            return item.status === '等待用户付款' || item.status === '等待商户付款' || item.status === '等待商家确认'
+          return item.status === '等待用户付款' || item.status === '等待商户付款' || item.status === '等待商家确认'
         });
       } else if (this.curIndex === 1) {
         this.list2 = this.list.filter(function(item, index, array){
-            return item.status === '交易完成'
+          return item.status === '交易完成'
         });
       } else if (this.curIndex === 2) {
         this.list2 = this.list.filter(function(item, index, array){
-            return item.status === '商家取消' || item.status === '付款超时或用户取消'
+          return item.status === '商家取消' || item.status === '付款超时或用户取消'
         });
       } else if (this.curIndex === 3) {
         this.list2 = this.list
@@ -139,14 +139,28 @@ export default {
         }
       })
     },
-    confirmCancle (orderId) {
+    confirmCancle () {
       this.showCancle = false
-      request.post(`/third/v1/otc/cancelTrade/${orderId}`).then((res) => {
-        this.$message({
-          type: 'success',
-          message: '取消成功',
-          center: true
-        })
+      const userId = this.$cookies.get('userId')
+      const outuid = this.$cookies.get('outuid')
+      request.post(`/third/v1/otc/cancelTrade/${this.orderId}`).then((res) => {
+        if (res.code === 1) {
+          request.post(`/third/v1/otc/myOrders/${userId}/${outuid}/0/0`).then((res) => {
+            this.list = res.obj
+            this.filter()
+          })
+          this.$message({
+            type: 'success',
+            message: '取消成功',
+            center: true
+          })
+        } else {
+          this.$message({
+            type: 'warning',
+            message: res.msg,
+            center: true
+          })
+        }
       })
     }
   }
