@@ -111,7 +111,6 @@ export default {
   mounted () {
     const _this = this
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
-
     let customerId = theRequest.customerId
     if(customerId) {
       if (customerId.length == 4) {

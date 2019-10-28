@@ -1,7 +1,7 @@
 <template>
   <div>
     <section class="main">
-      <img src="@/assets/img.png" class="logo2" alt="">
+      <img :src="logo" class="logo2" alt="">
       <p class="text">专业的数字货币场外担保交易平台</p>
       <div class="notice">
         <div class="input">
@@ -37,6 +37,7 @@
 import request from '@/utils/request';
 import dess from '@/utils/dess';
 import api from '@/utils/api';
+import logo from '@/assets/img.png'
 export default {
   name: 'Index',
   data () {
@@ -48,7 +49,8 @@ export default {
       curIndex: 0,
       usdtToCny: 0,  // 卖
       cnyToUsdt: 0,  // 买
-      balance: 0
+      balance: 0,
+      logo
     }
   },
   mounted () {

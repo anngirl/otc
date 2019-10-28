@@ -1,8 +1,8 @@
 <template>
   <div id="app">
     <header class="header" v-if="showHeader">
-      <router-link to="/" v-if="showHeader">
-        <img src="@/assets/logo.png" class="logo" alt="">
+      <router-link to="/">
+        <img :src="logo" class="logo" alt="">
       </router-link>
       <button @click="toRecord">交易记录</button>
     </header>
@@ -13,12 +13,14 @@
 <script>
 import api from '@/utils/api'
 import dess from '@/utils/dess'
+import logo from '@/assets/logo.png'
 export default {
   name: 'App',
   data () {
     return {
       showHeader: false,
-      info: ''
+      info: '',
+      logo
     }
   },
   mounted () {
@@ -30,9 +32,7 @@ export default {
     }
 
     // 安全访问
-    // console.log(sessionStorage.getItem('isOk'))
     // if (sessionStorage.getItem('isOk') != null) {
-    //   // sessionStorage.removeItem('isOk');
     // } else {
     //   this.$router.replace({
     //     path: '/error'
