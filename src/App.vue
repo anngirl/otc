@@ -22,7 +22,15 @@ export default {
     }
   },
   mounted () {
-    console.log(sessionStorage.getItem('isOk'))
+    // 点击返回跳转至首页
+    window.onpopstate = () => {
+      this.$router.push({
+        path: '/'
+      })  //输入要返回的上一级路由地址
+    }
+
+    // 安全访问
+    // console.log(sessionStorage.getItem('isOk'))
     if (sessionStorage.getItem('isOk') != null) {
       // sessionStorage.removeItem('isOk');
     } else {
@@ -30,7 +38,7 @@ export default {
         path: '/error'
       })
     }
- 
+    // 404页面不显示顶部导航
     if (this.$route.path === '/error') {
       this.showHeader = false
     } else {
