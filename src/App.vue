@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header class="header" v-if="showHeader">
-      <router-link to="/index">
+      <router-link to="/index" v-if="showHeader">
         <img src="@/assets/logo.png" class="logo" alt="">
       </router-link>
       <button @click="toRecord">交易记录</button>
@@ -22,28 +22,32 @@ export default {
     }
   },
   mounted () {
-    if (this.$route.path === '/' || this.$route.path === '' || this.$route.path === 'error') {
-      this.showHeader = false
+    console.log(sessionStorage.getItem('isOk'))
+    if (sessionStorage.getItem('isOk') != null) {
+      // sessionStorage.removeItem('isOk');
     } else {
-      this.showHeader = true
-    }
-    if (document.referrer == '') {
-      this.showHeader = false
       this.$router.replace({
         path: '/error'
       })
     }
-    // document.oncontextmenu = function(){
-    // 　return false;
-    // }
-    // document.onkeydown = function(e) {	
-		//   if (e.ctrlKey && (e.keyCode === 65 || e.keyCode === 67 || e.keyCode === 73 || e.keyCode === 74 || e.keyCode  === 80 || e.keyCode === 83 || e.keyCode === 85 || e.keyCode === 86 || e.keyCode === 117)) {
-		//  	  return false;
-		//   } 
-		//   if(e.keyCode==18||e.keyCode==123){
-		//   	return false
-		//   }
-	  // }
+ 
+    if (this.$route.path === '/error') {
+      this.showHeader = false
+    } else {
+      this.showHeader = true
+    }
+
+    document.oncontextmenu = function(){
+    　return false;
+    }
+    document.onkeydown = function(e) {	
+		  if (e.ctrlKey && (e.keyCode === 65 || e.keyCode === 67 || e.keyCode === 73 || e.keyCode === 74 || e.keyCode  === 80 || e.keyCode === 83 || e.keyCode === 85 || e.keyCode === 86 || e.keyCode === 117)) {
+		 	  return false;
+		  } 
+		  if(e.keyCode==18||e.keyCode==123){
+		  	return false
+		  }
+	  }
   },
   methods: {
     toRecord () {

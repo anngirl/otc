@@ -126,6 +126,17 @@ export default {
         });
         return false
       }
+      if (this.curIndex === 1) {
+        const balance = this.$cookies.get('balance')
+        if (parseFloat(balance) < parseFloat(this.number)) {
+          this.$message({
+            message: '卖出数量不能大于可用余额',
+            center: true,
+            type: 'warning'
+          })
+          return false
+        }
+      }
       this.curIndex === 0 ? api.buy(this.money, this.number, this.cnyToUsdt) : api.sale(this.money, this.number, this.usdtToCny)
     },
     filter (number) {
