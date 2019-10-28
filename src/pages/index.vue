@@ -205,6 +205,7 @@ export default {
         width: 270px;
         border: none;
         margin-left: 1vw;
+        box-shadow: none;
       }
       span{
         margin-right: 0.9vw;

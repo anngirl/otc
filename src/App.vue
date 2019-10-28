@@ -6,7 +6,7 @@
       </router-link>
       <button @click="toRecord">交易记录</button>
     </header>
-    <router-view/>
+    <router-view />
   </div>
 </template>
 

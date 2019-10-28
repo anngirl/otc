@@ -36,7 +36,6 @@ function buyPay(customerId, info, payWay) {
   const m = dess.encryptByDESModeCBC(`userId=${userId}&outUserId=${outuid}&orderAmount=${orderAmount}&customerId=${customerId}&payWay=${payWay}`)
   let data = {}
   data.m = m
-  
   const config = { headers: { 'Content-Type': 'application/json;charset=UTF-8' }}
   request.post('/third/v1/otc/merchantBuy', JSON.stringify(data), config).then((res) => {
     if (res.code === 0) {
