@@ -7,7 +7,6 @@ import request from '@/utils/request'
 export default {
   name: 'Verify',
   mounted () {
-    console.log(document.referrer)
     if (document.referrer == '') {
       this.$router.replace({
         path: '/error'

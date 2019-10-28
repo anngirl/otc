@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <header class="header" v-if="showHeader">
-      <router-link to="/index" v-if="showHeader">
+      <router-link to="/" v-if="showHeader">
         <img src="@/assets/logo.png" class="logo" alt="">
       </router-link>
       <button @click="toRecord">交易记录</button>
@@ -24,20 +24,20 @@ export default {
   mounted () {
     // 点击返回跳转至首页
     window.onpopstate = () => {
-      this.$router.push({
+      this.$router.replace({
         path: '/'
       })  //输入要返回的上一级路由地址
     }
 
     // 安全访问
-    console.log(sessionStorage.getItem('isOk'))
-    if (sessionStorage.getItem('isOk') != null) {
-      // sessionStorage.removeItem('isOk');
-    } else {
-      this.$router.replace({
-        path: '/error'
-      })
-    }
+    // console.log(sessionStorage.getItem('isOk'))
+    // if (sessionStorage.getItem('isOk') != null) {
+    //   // sessionStorage.removeItem('isOk');
+    // } else {
+    //   this.$router.replace({
+    //     path: '/error'
+    //   })
+    // }
     // 404页面不显示顶部导航
     if (this.$route.path === '/error') {
       this.showHeader = false
@@ -45,9 +45,9 @@ export default {
       this.showHeader = true
     }
 
-    document.oncontextmenu = function(){
-    　return false;
-    }
+    // document.oncontextmenu = function(){
+    // 　return false;
+    // }
     document.onkeydown = function(e) {	
 		  if (e.ctrlKey && (e.keyCode === 65 || e.keyCode === 67 || e.keyCode === 73 || e.keyCode === 74 || e.keyCode  === 80 || e.keyCode === 83 || e.keyCode === 85 || e.keyCode === 86 || e.keyCode === 117)) {
 		 	  return false;

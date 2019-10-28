@@ -18,12 +18,14 @@ Router.prototype.push = function push(location) {
 Vue.use(Router)
 
 export default new Router({
-  mode: process.env.NODE_ENV === 'development' ? 'history' : 'hash',
+  // mode: process.env.NODE_ENV === 'development' ? 'history' : 'hash',
+  mode: 'history',
   routes: [
     {
       path: '/',
-      name: 'Index',
-      component: Index
+      redirect: {
+        name: 'Index'
+      }
     },
     {
       path: '/verify',

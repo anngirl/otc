@@ -20,7 +20,6 @@
 	}
 	$(function(){
 		var sign = encodeURIComponent(getQueryString("sign"));
-		console.log(sign)
 		var appid=getQueryString("appid");
 		var outuid=getQueryString("outuid");
 		var balance=getQueryString("balance");
@@ -28,7 +27,6 @@
 		setCookie("outuid", outuid);
 		setCookie("userId", appid);
 		setCookie("balance", balance);
-		console.log("sign="+sign+"&appid="+appid+"&outuid="+outuid+"&balance="+balance+"&timestamp="+timestamp)
 		$.ajax({
 	        type: "get",
 	        crossDomain: true,

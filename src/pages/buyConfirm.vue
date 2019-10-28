@@ -112,7 +112,6 @@ export default {
     const _this = this
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
 
-    console.log(theRequest.customerId)
     let customerId = theRequest.customerId
     if(customerId) {
       if (customerId.length == 4) {
@@ -137,11 +136,11 @@ export default {
         const userId = this.$cookies.get('userId')
         const outuid = this.$cookies.get('outuid')
         const buyOrderStatus = dess.encryptByDESModeCBC(`userId=${userId}&outuid=${outuid}&orderNo=${theRequest.orderId}&cnyAmount=${theRequest.orderAmount}&usdtAmount=${theRequest.nums}`)
-        this.$router.push({
+        this.$router.replace({
           path: `/buyCancle/${this.$route.params.info}`
         })
       } else if (res.obj.status === "交易完成") {
-        this.$router.push({
+        this.$router.replace({
           path: '/'
         })
       }
@@ -192,7 +191,7 @@ export default {
       var s = Math.floor(deltaTime / 1000 % 60);
       var timeStr = "" + (m/10>=1?m=m:m="0"+m) + (s/10>=1?s=s:s="0"+s)
       if(parseInt(timeStr) < 3) {
-        this.$router.push({
+        this.$router.replace({
           path: `/buyCancle/${this.$route.params.info}`
         })
       }

@@ -5,9 +5,9 @@ import router from '../router/index'
 import {Message} from 'element-ui'
 import VueCookies from 'vue-cookies'
 
-// VueCookies.set('balance', 100);
-// VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
-// VueCookies.set('userId', 11536)
+VueCookies.set('balance', 100);
+VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
+VueCookies.set('userId', 11536)
 
 const outuid = VueCookies.get("outuid");
 const userId = VueCookies.get("userId");
@@ -84,7 +84,7 @@ function cancleBuy(info) {
   const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
   request.post(`/third/v1/otc/cancelTrade/${theRequest.orderId}`).then((res) => {
     if (res.code === 1) {
-      router.push({
+      router.replace({
         path: `/buyCancle/${info}`
       })
     } else {
@@ -106,8 +106,7 @@ function sale(money, number, price) {
 // 跳转至确认出售页面
 function salePay (name, bank, card, info) {
   const theRequest = util.decodeURI(dess.decryptByDESModeEBC(info))
-  console.log(balance)
-  console.log(theRequest.nums)
+  // console.log(theRequest)
   const numss = parseFloat(balance) - parseFloat(theRequest.nums)
   if (numss < 0) {
     Message.warning({
