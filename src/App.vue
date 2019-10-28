@@ -30,7 +30,7 @@ export default {
     }
 
     // 安全访问
-    // console.log(sessionStorage.getItem('isOk'))
+    console.log(sessionStorage.getItem('isOk'))
     if (sessionStorage.getItem('isOk') != null) {
       // sessionStorage.removeItem('isOk');
     } else {

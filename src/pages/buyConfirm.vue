@@ -25,7 +25,7 @@
     <div class="order_status_pay" v-if="customerId && details.payWay == 3">
       <p>请务必使用本人（{{customerId}}） 的支付方式向一下账号自行转账</p>
     </div>
-    <div class="order_status_pay" v-if="details.payWay == 2 || details.payWay == 1">
+    <div class="order_status_pay" v-if=" customerId && (details.payWay == 2 || details.payWay == 1)">
       <p>请使用<span v-text="details.payWay == 2 ? '微信账号' : '支付宝手机号/姓名'" />（{{customerId}}）向以下账户自行转账</p>
     </div>
     <ul class="pay_info" v-if="details.payWay == 3">
@@ -114,15 +114,18 @@ export default {
 
     console.log(theRequest.customerId)
     let customerId = theRequest.customerId
-    if (customerId.length == 4) {
-      this.customerId = customerId.substring(0,1)+"**"+customerId.substring(2,3)
-    } else if (customerId.length == 3) {
-      this.customerId = customerId.substring(0,1)+ "*" + customerId.substring(2,customerId.length)
-    } else if (customerId.length == 2) {
-      this.customerId = "*" + customerId.substring(1,customerId.length)
-    } else if (customerId.length > 4) {
-      this.customerId = customerId.substring(0, 1) + "****";
+    if(customerId) {
+      if (customerId.length == 4) {
+        this.customerId = customerId.substring(0,1)+"**"+customerId.substring(2,3)
+      } else if (customerId.length == 3) {
+        this.customerId = customerId.substring(0,1)+ "*" + customerId.substring(2,customerId.length)
+      } else if (customerId.length == 2) {
+        this.customerId = "*" + customerId.substring(1,customerId.length)
+      } else if (customerId.length > 4) {
+        this.customerId = customerId.substring(0, 1) + "****";
+      }
     }
+    
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
     request.post(`/third/v1/otc/tradeStatus/${theRequest.orderId}`).then((res) => {
       this.details = res.obj
