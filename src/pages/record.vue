@@ -24,7 +24,7 @@
         <td align="center">{{item.createTime}}</td>
         <td align="right">
           <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="toBuy(item.orderNo)">去支付</span>
-          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单{{item.orderNo}}</span>
+          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
         </td>
       </tr>
     </table>
