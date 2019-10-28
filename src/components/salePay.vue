@@ -135,6 +135,9 @@ export default {
       }
     },
     validate1 () {
+      this.name = this.name.trim()
+      this.bank = this.bank.trim()
+      this.card = this.card.trim()
       if (this.name.trim().length < 1) {
         this.$message({
           message: '请输入收款人姓名',

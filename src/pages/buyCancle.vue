@@ -7,11 +7,11 @@
     <ul class="lists">
       <li class="price">
         <p>总价：</p>
-        <p>{{theRequest.orderAmount}}CNY</p>
+        <p>{{details.cnyAmount}}CNY</p>
       </li>
       <li>
         <p>数量：</p>
-        <p>{{theRequest.nums}}USDT</p>
+        <p>{{nums}}USDT</p>
       </li>
       <li>
         <p>单价：</p>
@@ -57,7 +57,9 @@ export default {
     return {
       theRequest: {},
       cnyToUsdt: '',
-      status: '订单已取消，不可查看支付方式'
+      status: '订单已取消，不可查看支付方式',
+      details: {},
+      nums: 0
     }
   },
   mounted () {
@@ -65,6 +67,10 @@ export default {
     const theRequest = util.decodeURI(dess.decryptByDESModeEBC(this.$route.params.info))
     this.theRequest = theRequest
     this.cnyToUsdt = localStorage.getItem('cnyToUsdt')
+    request.post(`/third/v1/otc/tradeStatus/${theRequest.orderId}`).then((res) => {
+      this.details = res.obj
+      this.nums = (parseFloat(res.obj.cnyAmount) / parseFloat(this.cnyToUsdt)).toFixed(2)
+    })
   },
   methods: {
   }

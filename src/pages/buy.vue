@@ -106,6 +106,7 @@ export default {
   },
   methods: {
     validate () {
+      this.name = this.name.trim()
       if (this.checkedValue === '银行卡') {
         const re=/[\u4E00-\u9FA5\uF900-\uFA2D]/;
         if (!(re.test(this.name))) {
