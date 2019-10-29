@@ -32,12 +32,12 @@ export default {
     }
 
     // 安全访问
-    // if (sessionStorage.getItem('isOk') != null) {
-    // } else {
-    //   this.$router.replace({
-    //     path: '/error'
-    //   })
-    // }
+    if (sessionStorage.getItem('isOk') != null) {
+    } else {
+      this.$router.replace({
+        path: '/error'
+      })
+    }
     // 404页面不显示顶部导航
     if (this.$route.path === '/error') {
       this.showHeader = false

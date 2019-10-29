@@ -5,9 +5,9 @@ import router from '../router/index'
 import {Message} from 'element-ui'
 import VueCookies from 'vue-cookies'
 
-VueCookies.set('balance', 100);
-VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
-VueCookies.set('userId', 11536)
+// VueCookies.set('balance', 100);
+// VueCookies.set('outuid', '93E109400B20A29440FD597894991046')
+// VueCookies.set('userId', 11536)
 
 const outuid = VueCookies.get("outuid");
 const userId = VueCookies.get("userId");
