@@ -2,7 +2,9 @@
   <div id="app">
     <header class="header" v-if="showHeader">
       <router-link to="/">
-        <img :src="logo" class="logo" alt="">
+        <div class="logo">
+          <img :src="logo" alt="">
+        </div>
       </router-link>
       <button @click="toRecord">交易记录</button>
     </header>
@@ -32,12 +34,12 @@ export default {
     }
 
     // 安全访问
-    // if (sessionStorage.getItem('isOk') != null) {
-    // } else {
-    //   this.$router.replace({
-    //     path: '/error'
-    //   })
-    // }
+    if (sessionStorage.getItem('isOk') != null) {
+    } else {
+      this.$router.replace({
+        path: '/error'
+      })
+    }
     // 404页面不显示顶部导航
     if (this.$route.path === '/error') {
       this.showHeader = false
@@ -101,11 +103,16 @@ input{
   box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.03);
   align-items: center;
   height: 90px;
-  img{
+  .logo{
     margin-left: 6.4vw;
     width: 157px;
     height: 33px;
+    img{
+      width: 157px;
+      height: 33px;
+    }
   }
+  
   button{
     cursor: pointer;
     margin-right: 6.4vw;

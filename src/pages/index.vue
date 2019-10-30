@@ -1,7 +1,9 @@
 <template>
   <div>
     <section class="main">
-      <img :src="logo" class="logo2" alt="">
+      <div class="logo2">
+        <img :src="logo" alt="">
+      </div>
       <p class="text">专业的数字货币场外担保交易平台</p>
       <div class="notice">
         <div class="input">
@@ -180,6 +182,10 @@ export default {
     height: 60px;
     display: block;
     margin: 23.3vh auto 2.1vh;
+    img{
+      width: 418px;
+      height: 60px;
+    }
   }
   p.text{
     color: #575757;

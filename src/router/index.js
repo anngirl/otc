@@ -18,8 +18,8 @@ Router.prototype.push = function push(location) {
 Vue.use(Router)
 
 export default new Router({
-  mode: 'history',
-  base: '/test/otc_pc/index.html',
+  // mode: 'history',
+  // base: '/test/otc_pc/',
   routes: [
     {
       path: '/',
