@@ -1,5 +1,6 @@
 import axios from 'axios';
-const baseURL = 'http://47.244.216.195:8083/';
+// const baseURL = 'http://47.244.216.195:8083/';
+const baseURL = 'https://app.tokenpanda.pro/';
 import {Message} from 'element-ui'
 const request = axios.create({
   baseURL,

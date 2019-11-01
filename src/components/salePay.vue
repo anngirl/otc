@@ -156,8 +156,8 @@ export default {
         })
         return false
       }
-      this.card = this.card.replace(/[^\d\.]/g, '')
-      if (this.card.length < 16  || this.card.length > 19) {
+      const re2 = /^[1-9]\d*|0$/
+      if (this.card.length < 16  || this.card.length > 19 || !(re2.test(this.card))) {
         this.$message({
           message: '银行卡号不正确',
           type: 'warning',
