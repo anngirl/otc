@@ -7,12 +7,12 @@
       <p class="text">专业的数字货币场外担保交易平台</p>
       <div class="notice">
         <div class="input">
-          <input type="text" placeholder="请输入金额" pattern="number" v-on:input="getMoney" v-model="money" />
+          <input type="text" placeholder="请输入金额" :disabled="disabled" pattern="number" v-on:input="getMoney" v-model="money" />
           <span>CNY</span>
         </div>
         <img src="@/assets/change.png" class="change" alt="">
         <div class="input">
-          <input type="text" placeholder="请输入数量" pattern="number" v-on:input="getNumber" v-model="number" />
+          <input type="text" placeholder="请输入数量" :disabled="disabled" pattern="number" v-on:input="getNumber" v-model="number" />
           <span>USDT</span>
         </div>
         <div class="btn-wrap">
@@ -52,23 +52,25 @@ export default {
       usdtToCny: 0,  // 卖
       cnyToUsdt: 0,  // 买
       balance: 0,
-      logo
+      logo,
+      disabled: true
     }
   },
   created () {
-     const userId = this.$cookies.get('userId')
-      this.balance = this.$cookies.get('balance')
-      request.post(`/third/v1/otc/getExchangeRate/${userId}`).then((res) => {
-        localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
-        localStorage.setItem('usdtToCny', res.obj.usdtToCny)
-        this.cnyToUsdt = res.obj.cnyToUsdt
-        this.usdtToCny = res.obj.usdtToCny
-      })
-      request.post(`/third/v1/otc/supportPayWay/${userId}`).then((res) => {
-        localStorage.setItem('wx', res.obj.wx)
-        localStorage.setItem('bank', res.obj.bank)
-        localStorage.setItem('zfb', res.obj.zfb)
-      })
+    const userId = this.$cookies.get('userId')
+    this.balance = this.$cookies.get('balance')
+    request.post(`/third/v1/otc/getExchangeRate/${userId}`).then((res) => {
+      localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
+      localStorage.setItem('usdtToCny', res.obj.usdtToCny)
+      this.cnyToUsdt = res.obj.cnyToUsdt
+      this.usdtToCny = res.obj.usdtToCny
+      this.disabled = false
+    })
+    request.post(`/third/v1/otc/supportPayWay/${userId}`).then((res) => {
+      localStorage.setItem('wx', res.obj.wx)
+      localStorage.setItem('bank', res.obj.bank)
+      localStorage.setItem('zfb', res.obj.zfb)
+    })
   },
   methods: {
     getMoney () {
