@@ -1,5 +1,8 @@
 <template>
-  <div id="app">
+  <div id="app"  v-loading="loading"
+    element-loading-text="拼命加载中"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0.8)">
     <header class="header" v-if="showHeader">
       <router-link to="/">
         <div class="logo">
@@ -16,13 +19,15 @@
 import api from '@/utils/api'
 import dess from '@/utils/dess'
 import logo from '@/assets/logo.png'
+import request from '@/utils/request'
 export default {
   name: 'App',
   data () {
     return {
       showHeader: false,
       info: '',
-      logo
+      logo,
+      loading: false
     }
   },
   mounted () {
@@ -35,6 +40,7 @@ export default {
 
     // 安全访问
     if (sessionStorage.getItem('isOk') != null) {
+      this.getBaseData()
     } else {
       this.$router.replace({
         path: '/error'
@@ -45,6 +51,7 @@ export default {
       this.showHeader = false
     } else {
       this.showHeader = true
+      this.getBaseData()
     }
 
     // document.oncontextmenu = function(){
@@ -62,6 +69,22 @@ export default {
   methods: {
     toRecord () {
       api.orderList()
+    },
+    getBaseData () {
+      // const userId = this.$cookies.get('userId')
+      // this.balance = this.$cookies.get('balance')
+      // request.post(`/third/v1/otc/getExchangeRate/${userId}`).then((res) => {
+      //   localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
+      //   localStorage.setItem('usdtToCny', res.obj.usdtToCny)
+      //   this.$cookies.set('cnyToUsdt', res.obj.cnyToUsdt)
+      //   this.$cookies.set('usdtToCny', res.obj.usdtToCny)
+      //   this.loading = false
+      // })
+      // request.post(`/third/v1/otc/supportPayWay/${userId}`).then((res) => {
+      //   localStorage.setItem('wx', res.obj.wx)
+      //   localStorage.setItem('bank', res.obj.bank)
+      //   localStorage.setItem('zfb', res.obj.zfb)
+      // })
     }
   },
 }
@@ -73,6 +96,8 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
+  width: 100%;
+  height: 100%;
 }
 ::-webkit-input-placeholder { /* WebKit browsers */
   color: #999999;

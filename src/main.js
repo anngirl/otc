@@ -7,9 +7,10 @@ Vue.config.productionTip = false
 import axios from 'axios';
 Vue.prototype.$axios = axios;
 // element
-import { Message } from 'element-ui';
+import { Message, Loading } from 'element-ui';
 Vue.prototype.$message = Message
 Vue.component(Message.name, Message)
+Vue.use(Loading)
 
 // vue-cookies
 import VueCookies from 'vue-cookies'

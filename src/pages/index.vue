@@ -55,20 +55,20 @@ export default {
       logo
     }
   },
-  mounted () {
-    const userId = this.$cookies.get('userId')
-    this.balance = this.$cookies.get('balance')
-    request.post(`/third/v1/otc/getExchangeRate/${userId}`).then((res) => {
-      localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
-      localStorage.setItem('usdtToCny', res.obj.usdtToCny)
-      this.cnyToUsdt = res.obj.cnyToUsdt
-      this.usdtToCny = res.obj.usdtToCny
-    })
-    request.post(`/third/v1/otc/supportPayWay/${userId}`).then((res) => {
-      localStorage.setItem('wx', res.obj.wx)
-      localStorage.setItem('bank', res.obj.bank)
-      localStorage.setItem('zfb', res.obj.zfb)
-    })
+  created () {
+     const userId = this.$cookies.get('userId')
+      this.balance = this.$cookies.get('balance')
+      request.post(`/third/v1/otc/getExchangeRate/${userId}`).then((res) => {
+        localStorage.setItem('cnyToUsdt', res.obj.cnyToUsdt)
+        localStorage.setItem('usdtToCny', res.obj.usdtToCny)
+        this.cnyToUsdt = res.obj.cnyToUsdt
+        this.usdtToCny = res.obj.usdtToCny
+      })
+      request.post(`/third/v1/otc/supportPayWay/${userId}`).then((res) => {
+        localStorage.setItem('wx', res.obj.wx)
+        localStorage.setItem('bank', res.obj.bank)
+        localStorage.setItem('zfb', res.obj.zfb)
+      })
   },
   methods: {
     getMoney () {
