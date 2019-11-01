@@ -6,6 +6,12 @@ import router from './router'
 Vue.config.productionTip = false
 import axios from 'axios';
 Vue.prototype.$axios = axios;
+
+import "babel-polyfill"
+
+import Promise from 'es6-promise'
+Promise.polyfill()
+
 // element
 import { Message, Loading } from 'element-ui';
 Vue.prototype.$message = Message

@@ -108,8 +108,8 @@ export default {
     validate () {
       this.name = this.name.trim()
       if (this.checkedValue === '银行卡') {
-        const re=/[\u4E00-\u9FA5\uF900-\uFA2D]/;
-        if (!(re.test(this.name))) {
+        const re=/[^\u4e00-\u9fa5]/;
+        if (re.test(this.name)) {
           this.$message({
             message: '请输入正确姓名',
             type: 'warning',

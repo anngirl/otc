@@ -95,6 +95,9 @@ input:disabled {
   -webkit-text-fill-color: #999999;
   -webkit-opacity: 1;
 }
+input::-ms-clear, input::-ms-reveal{
+  display: none;
+}
 button{
   outline: none;
   border: none;

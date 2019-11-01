@@ -1,37 +1,43 @@
 <template>
-  <div class="index">
+  <div class="index"  v-loading="loading"
+    element-loading-text="正在为您加载"
+    element-loading-spinner="el-icon-loading"
+    element-loading-background="rgba(0, 0, 0, 0)">
     <ul class="nav">
       <li v-for="(item, index) in navBar" :key="index" :class="curIndex === index ? 'active' : ''" @click="switchs(index)" >{{item.title}}</li>
     </ul>
-    <table cellpadding="0"  v-if="list2.length > 0" >
-      <tr class="title">
-        <th class="title_order" width="200px" align="left">订单号</th>
-        <th align="center">状态</th>
-        <th align="center">总价</th>
-        <th align="center">单价</th>
-        <th align="center">交易数量</th>
-        <th align="center">时间</th>
-        <th width="140px" align="right">操作</th>
-      </tr>
-      <tr class="item" v-for="(item, index) in list2" :key="index">
-        <td class="order" width="200px" align="left">
-          <p><span :class="item.type === '买币' ? 'green' : 'red'">{{item.type === '买币' ? '购买' : '出售'}}</span>{{item.orderNo}}</p>
-        </td>
-        <td align="center">{{item.status}}</td>
-        <td align="center">{{item.cnyAmount}}CNY</td>
-        <td align="center">{{item.type === '买币' ? cnyToUsdt : usdtToCny}}CNY</td>
-        <td align="center">{{item.usdtAmount}}USDT</td>
-        <td align="center">{{item.createTime}}</td>
-        <td align="right">
-          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="toBuy(item.orderNo)">去支付</span>
-          <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
-        </td>
-      </tr>
-    </table>
-    <div v-else class="empty">
-      <img src='@/assets/noData.png' alt="">
-      <p>暂无记录</p>
+    <div v-if="showList">
+      <table cellpadding="0"  v-if="list2.length > 0" >
+        <tr class="title">
+          <th class="title_order" width="200px" align="left">订单号</th>
+          <th align="center">状态</th>
+          <th align="center">总价</th>
+          <th align="center">单价</th>
+          <th align="center">交易数量</th>
+          <th align="center">时间</th>
+          <th width="140px" align="right">操作</th>
+        </tr>
+        <tr class="item" v-for="(item, index) in list2" :key="index">
+          <td class="order" width="200px" align="left">
+            <p><span :class="item.type === '买币' ? 'green' : 'red'">{{item.type === '买币' ? '购买' : '出售'}}</span>{{item.orderNo}}</p>
+          </td>
+          <td align="center">{{item.status}}</td>
+          <td align="center">{{item.cnyAmount}}CNY</td>
+          <td align="center">{{item.type === '买币' ? cnyToUsdt : usdtToCny}}CNY</td>
+          <td align="center">{{item.usdtAmount}}USDT</td>
+          <td align="center">{{item.createTime}}</td>
+          <td align="right">
+            <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="confirm" @click="toBuy(item.orderNo)">去支付</span>
+            <span v-if="item.status === '等待用户付款' || item.status === '等待商户付款'" class="cancle" @click="showCancle = true; orderId = item.orderNo">取消订单</span>
+          </td>
+        </tr>
+      </table>
+      <div v-else class="empty">
+        <img src='@/assets/noData.png' alt="">
+        <p>暂无记录</p>
+      </div>
     </div>
+    
     <div v-if="showConfirm">
       <ConfirmBuy @cancle="showConfirm = false" :orderAmount="orderAmount" :customerId="customerId" @confirmBuy="confirmBuy" />
     </div>
@@ -70,10 +76,12 @@ export default {
       showCancle: false,
       list: [],
       list2: [],
+      showList: false,
       orderAmount: '',
       customerId: '',
       cnyToUsdt: '',
-      usdtToCny: ''
+      usdtToCny: '',
+      loading: true
     }
   },
   mounted () {
@@ -82,7 +90,9 @@ export default {
     const userId = this.$cookies.get('userId')
     const outuid = this.$cookies.get('outuid')
     request.post(`/third/v1/otc/myOrders/${userId}/${outuid}/0/0`).then((res) => {
+      this.showList = true
       this.list = res.obj
+      this.loading = false
       this.filter()
     })
   },
@@ -170,11 +180,13 @@ export default {
   .index{
     width: 1226px;
     margin: 5.6vh auto;
+    min-height: 600px;
     box-shadow:  0 0 6px 0 rgba(0, 0, 0, 0.03);
     .nav{
       border-bottom: solid 1px #d8d8d8;
       height: 54px;
       display: flex;
+      padding-left: 20px;
       li{
         cursor: pointer;
         list-style: none;
@@ -193,7 +205,9 @@ export default {
     }
     table{
       margin-top: 20px;
-      width: 100%;
+      padding-left: 20px;
+      padding-right: 20px;
+      width: 1226px;
       .title{
         font-family: PingFangSC-Medium;
         font-size: 18px;

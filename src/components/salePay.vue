@@ -138,15 +138,17 @@ export default {
       this.name = this.name.trim()
       this.bank = this.bank.trim()
       this.card = this.card.trim()
-      if (this.name.trim().length < 1) {
+      const re=/[^\u4e00-\u9fa5]/;
+      // this.name = this.name.replace(/[\u4E00-\u9FA5\uF900-\uFA2D]/g, '')
+      if (re.test(this.name)) {
         this.$message({
-          message: '请输入收款人姓名',
+          message: '请输入中文姓名',
           type: 'warning',
           canter: true
         })
         return false
       }
-      if ((this.bank).trim().length < 1) {
+      if ((this.bank).length < 1) {
         this.$message({
           message: '请输入收款银行',
           type: 'warning',
@@ -154,7 +156,8 @@ export default {
         })
         return false
       }
-      if (this.card.trim().length < 16  || this.card.trim().length > 19) {
+      this.card = this.card.replace(/[^\d\.]/g, '')
+      if (this.card.length < 16  || this.card.length > 19) {
         this.$message({
           message: '银行卡号不正确',
           type: 'warning',
